@@ -1,0 +1,532 @@
+/* Justice Companion Error Boundary Styles */
+/* TACTICAL RETREAT: Where crashes become intelligence */
+
+.error-boundary-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.error-boundary-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(220, 53, 69, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(220, 53, 69, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  animation: errorPulse 4s ease-in-out infinite;
+}
+
+.error-content {
+  max-width: 800px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  border: 3px solid #dc3545;
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(220, 53, 69, 0.4);
+  animation: slideInBounce 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.error-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #dc3545 100%);
+  background-size: 200% 100%;
+  animation: errorBar 2s linear infinite;
+}
+
+.error-content h1 {
+  color: #dc3545;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.error-content h2 {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin: 0 0 2rem 0;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+/* Error Details Section */
+.error-details {
+  background: rgba(220, 53, 69, 0.1);
+  border: 2px solid rgba(220, 53, 69, 0.3);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.error-id {
+  color: #ffc107;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(255, 193, 7, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 1.5rem 0;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #ff6b6b;
+  word-break: break-word;
+}
+
+.error-stack {
+  margin-top: 1rem;
+}
+
+.error-stack summary {
+  color: #17a2b8;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.75rem;
+  background: rgba(23, 162, 184, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #17a2b8;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.error-stack summary:hover {
+  background: rgba(23, 162, 184, 0.2);
+  transform: translateX(5px);
+}
+
+.error-stack pre {
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Error Report Section */
+.error-report {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.error-report h3 {
+  color: #28a745;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.error-report-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.error-report-input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+  background: rgba(40, 167, 69, 0.1);
+}
+
+.error-report-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Error Actions */
+.error-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.restart-button,
+.report-button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 160px;
+}
+
+.restart-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.restart-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.6);
+  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+}
+
+.report-button {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
+}
+
+.report-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(23, 162, 184, 0.6);
+  background: linear-gradient(135deg, #138496 0%, #6f42c1 100%);
+}
+
+.report-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+/* Button Shine Effect */
+.restart-button::before,
+.report-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.restart-button:hover::before,
+.report-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+/* Error Footer */
+.error-footer {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.error-footer p {
+  margin: 0 0 1rem 0;
+}
+
+.error-footer strong {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.dedication {
+  color: #dc3545;
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Custom Scrollbar for Stack Trace */
+.error-stack pre::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.error-stack pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.error-stack pre::-webkit-scrollbar-thumb {
+  background: rgba(220, 53, 69, 0.6);
+  border-radius: 3px;
+}
+
+.error-stack pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(220, 53, 69, 0.8);
+}
+
+/* Animations */
+@keyframes slideInBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes errorPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes errorBar {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .error-boundary-container {
+    padding: 1rem;
+  }
+
+  .error-content {
+    padding: 2rem;
+  }
+
+  .error-content h1 {
+    font-size: 2rem;
+  }
+
+  .error-content h2 {
+    font-size: 1.1rem;
+  }
+
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .restart-button,
+  .report-button {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .error-details,
+  .error-report,
+  .error-footer {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-content {
+    padding: 1.5rem;
+  }
+
+  .error-content h1 {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  .error-content h2 {
+    font-size: 1rem;
+  }
+
+  .restart-button,
+  .report-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 140px;
+  }
+
+  .error-stack pre {
+    font-size: 0.7rem;
+    max-height: 150px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .error-boundary-container {
+    background: #000000;
+  }
+
+  .error-content {
+    border-width: 4px;
+    background: #000000;
+  }
+
+  .error-details,
+  .error-report,
+  .error-footer {
+    border-width: 3px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .restart-button,
+  .report-button {
+    border: 2px solid #ffffff;
+  }
+
+  .error-report-input {
+    border-width: 3px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .error-boundary-container,
+  .error-content,
+  .restart-button,
+  .report-button,
+  .error-stack summary {
+    animation: none;
+    transition: none;
+  }
+
+  .error-boundary-container::before,
+  .error-content::before {
+    display: none;
+  }
+
+  .restart-button:hover,
+  .report-button:hover,
+  .error-stack summary:hover {
+    transform: none;
+  }
+
+  .restart-button::before,
+  .report-button::before {
+    display: none;
+  }
+}
+
+/* Focus States for Accessibility */
+.restart-button:focus,
+.report-button:focus,
+.error-report-input:focus,
+.error-stack summary:focus {
+  outline: 3px solid rgba(220, 53, 69, 0.5);
+  outline-offset: 3px;
+}
+
+/* Emergency State Styling */
+.error-content.critical {
+  border-color: #ff4757;
+  animation: criticalError 1s ease-in-out infinite alternate;
+}
+
+@keyframes criticalError {
+  from {
+    box-shadow: 0 20px 60px rgba(255, 71, 87, 0.4);
+  }
+  to {
+    box-shadow: 0 20px 60px rgba(255, 71, 87, 0.8);
+  }
+}
+
+/* Status Indicators */
+.error-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+/* Loading State for Report Button */
+.report-button.loading {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  cursor: wait;
+}
+
+.report-button.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

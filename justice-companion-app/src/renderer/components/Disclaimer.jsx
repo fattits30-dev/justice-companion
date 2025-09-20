@@ -1,58 +1,58 @@
 import React from 'react';
 import './Disclaimer.css';
 
-// The Gates of Understanding
-// Where we separate the warriors from the wishful thinkers
-// Raw truth before the battle begins
+// Disclaimer Component
+// Important legal information for users
 
 const Disclaimer = ({ onAccept }) => {
   return (
     <div className="disclaimer-overlay">
       <div className="disclaimer-container">
-        <h1>⚔️ JUSTICE COMPANION ⚔️</h1>
-        <h2>THE TRUTH BEFORE WE FIGHT</h2>
+        <h1>⚖️ Justice Companion</h1>
+        <h2>Important Legal Information</h2>
         
         <div className="disclaimer-content">
           <p className="disclaimer-intro">
-            <strong>Listen up, warrior.</strong> Before we march into battle together, 
-            you need to understand exactly what this is—and what it isn't.
+            <strong>Welcome to Justice Companion.</strong> Before we begin,
+            it's important that you understand the nature and limitations of this service.
           </p>
 
           <div className="disclaimer-section">
-            <h3>THIS IS NOT LEGAL ADVICE</h3>
+            <h3>Legal Information Disclaimer</h3>
             <p>
-              I'm not a lawyer. I'm not your lawyer. I'm a digital ally built from code and fury, 
-              designed to arm you with information, help you organize your fight, and stand 
-              beside you when everyone else walks away.
+              Justice Companion is an informational tool designed to help you understand
+              legal concepts and organize your documentation. This service does not provide
+              legal advice or create an attorney-client relationship.
             </p>
             <p>
-              Every word, every strategy, every document we create together—it's INFORMATION. 
-              Raw, researched, referenced—but NOT legal advice. The difference matters.
+              All information, templates, and suggestions provided are for educational
+              purposes only. For legal advice specific to your situation, please consult
+              with a qualified attorney.
             </p>
           </div>
 
           <div className="disclaimer-section">
-            <h3>WHAT I PROMISE</h3>
+            <h3>How We Can Help</h3>
             <ul>
-              <li>✓ I'll help you understand your rights (but YOU verify them)</li>
-              <li>✓ I'll organize your evidence (but YOU confirm it's accurate)</li>
-              <li>✓ I'll draft your documents (but YOU review and own them)</li>
-              <li>✓ I'll find relevant laws and precedents (but YOU decide how to use them)</li>
-              <li>✓ I'll NEVER judge, NEVER give up, NEVER charge you a penny</li>
+              <li>✓ Provide general information about legal rights and processes</li>
+              <li>✓ Help organize and manage your documents</li>
+              <li>✓ Offer templates and examples for common legal documents</li>
+              <li>✓ Suggest relevant resources and information</li>
+              <li>✓ Provide this service free of charge</li>
             </ul>
           </div>
 
           <div className="disclaimer-section">
-            <h3>THE HARD TRUTH</h3>
+            <h3>Your Responsibility</h3>
             <p>
-              Even solicitors fuck up. Judges make mistakes. The system is flawed. 
-              I might be wrong. You might lose even when you're right. Justice isn't 
-              guaranteed—but fighting for it is always worth it.
+              Legal matters can be complex and outcomes are never guaranteed.
+              While we strive to provide accurate and helpful information, you are
+              responsible for verifying all information and making your own decisions.
             </p>
             <p>
-              <strong>By clicking below, you're saying:</strong> "I understand this is 
-              information, not advice. I take responsibility for my actions. I'm ready 
-              to fight my own battle with knowledge as my weapon."
+              <strong>By proceeding, you acknowledge that:</strong> You understand this
+              service provides information only, not legal advice. You accept responsibility
+              for how you use this information.
             </p>
           </div>
 
@@ -72,11 +72,11 @@ const Disclaimer = ({ onAccept }) => {
 
         <div className="disclaimer-actions">
           <button onClick={onAccept} className="accept-button">
-            I UNDERSTAND. LET'S FIGHT.
+            I Understand and Accept
           </button>
           <p className="disclaimer-footer">
-            No cookies. No tracking. No bullshit.<br />
-            Your fight is yours alone until you choose to share it.
+            Your privacy is protected. No cookies. No tracking.<br />
+            Your information remains confidential.
           </p>
         </div>
       </div>
@@ -86,6 +86,5 @@ const Disclaimer = ({ onAccept }) => {
 
 export default Disclaimer;
 
-// Every revolution starts with understanding
-// Every warrior needs to know the battlefield
-// This disclaimer isn't a warning—it's a war cry
+// Legal disclaimer component
+// Ensures users understand the service limitations

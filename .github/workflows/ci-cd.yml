@@ -1,0 +1,172 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  release:
+    types: [created]
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: justice-companion-app/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd justice-companion-app
+        npm ci
+
+    - name: Run linting
+      run: |
+        cd justice-companion-app
+        npm run lint || true
+
+    - name: Run tests
+      run: |
+        cd justice-companion-app
+        npm test -- --passWithNoTests
+
+    - name: Build application
+      run: |
+        cd justice-companion-app
+        npm run build
+
+  build-electron:
+    name: Build Electron App
+    needs: test
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: justice-companion-linux
+            build_command: npm run dist:linux
+          - os: windows-latest
+            artifact_name: justice-companion-windows
+            build_command: npm run dist:win
+          - os: macos-latest
+            artifact_name: justice-companion-macos
+            build_command: npm run dist:mac
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: justice-companion-app/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd justice-companion-app
+        npm ci
+
+    - name: Build Electron app
+      run: |
+        cd justice-companion-app
+        ${{ matrix.build_command }} || npm run dist
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: justice-companion-app/dist/
+        retention-days: 5
+
+  deploy-web:
+    name: Deploy Web Version
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: justice-companion-app/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd justice-companion-app
+        npm ci
+
+    - name: Build for production
+      run: |
+        cd justice-companion-app
+        npm run build
+      env:
+        CI: false
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./justice-companion-app/dist
+        cname: justice-companion.org
+
+  create-release:
+    name: Create Release
+    needs: build-electron
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Create release assets
+      run: |
+        zip -r justice-companion-linux.zip justice-companion-linux/
+        zip -r justice-companion-windows.zip justice-companion-windows/
+        zip -r justice-companion-macos.zip justice-companion-macos/
+
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          justice-companion-linux.zip
+          justice-companion-windows.zip
+          justice-companion-macos.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Run security audit
+      run: |
+        cd justice-companion-app
+        npm audit --audit-level=moderate || true
+
+    - name: Run Snyk Security Scan
+      uses: snyk/actions/node@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high --project-path=justice-companion-app

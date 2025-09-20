@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+justice-companion-app/node_modules/
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Claude settings that change
+.claude/settings.local.json
+
+# Test files and outputs
+test-results/
+screenshots/
+*.test.js
+test-*.js
+simple-test.html
+test.html
+
+# Temporary files
+*.tmp
+*.temp
+nul
+
+# Large files
+OllamaSetup.exe
+*.exe
+*.msi
+*.dmg

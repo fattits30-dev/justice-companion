@@ -121,7 +121,7 @@ const FactConfirm = ({ fact, onConfirm, onEdit, onSkip }) => {
 
         <div className="fact-confirm-footer">
           <p>One-time verification. We won't ask again unless context changes.</p>
-          <p><strong>Your facts. Your fight. Your control.</strong></p>
+          <p><strong>Your information. Your privacy. Your decision.</strong></p>
         </div>
       </div>
     </div>

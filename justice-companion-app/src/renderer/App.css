@@ -1,21 +1,185 @@
-/* App.css - Main container styles */
+/* ChatGPT-Style Legal Assistant Application */
+/* Clean, minimal, professional design */
+
+:root {
+  /* ChatGPT-inspired color palette */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f8;
+  --bg-tertiary: #ececec;
+  --text-primary: #2d333a;
+  --text-secondary: #6e7681;
+  --text-tertiary: #959da5;
+  --border-light: #e5e5e5;
+  --border-medium: #d1d5db;
+  --accent-green: #10a37f;
+  --accent-purple: #ab68ff;
+  --accent-blue: #3b82f6;
+  --hover-bg: #f5f5f5;
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 60px;
+  --right-panel-width: 320px;
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 350ms;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Display", "Inter", sans-serif;
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main app container - 3 column layout */
 .app-container {
   display: flex;
   height: 100vh;
-  background: #1a1a1a;
+  background: var(--bg-secondary);
+  position: relative;
 }
 
+/* Main content area - Center column */
 .main-content {
   flex: 1;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  min-width: 0;
+  position: relative;
+  transition: margin-left var(--transition-normal) ease;
 }
 
 .main-content.sidebar-open {
-  margin-left: 250px;
+  margin-left: var(--sidebar-width);
 }
 
+/* Coming soon placeholder */
 .coming-soon {
-  color: #888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
   text-align: center;
-  padding: 50px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+}
+
+.coming-soon h2 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.coming-soon p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 400px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content.sidebar-open {
+    margin-left: 0;
+  }
+}
+
+/* Utility classes */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(16, 163, 127, 0.2);
+  color: var(--text-primary);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Loading API state */
+.loading-api {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading-api h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--accent-green);
+}
+
+.loading-api p {
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-light);
+  border-radius: 50%;
+  border-top-color: var(--accent-green);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

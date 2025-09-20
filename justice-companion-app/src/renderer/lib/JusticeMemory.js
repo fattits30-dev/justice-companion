@@ -431,9 +431,8 @@ class JusticeMemory {
 // Initialize the global memory system
 if (typeof window !== 'undefined') {
   window.justiceMemory = new JusticeMemory();
-  console.log('⚔️ Justice Memory System: ARMED AND RECORDING');
-  console.log('Every action remembered. Every pattern recognized.');
-  console.log('This is how we learn. This is how we win.');
+  console.log('📊 Memory System: Initialized');
+  console.log('Tracking user interactions for improved assistance');
 }
 
 export default JusticeMemory;

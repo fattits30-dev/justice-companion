@@ -6,11 +6,11 @@ import FactConfirm from './components/FactConfirm';
 import CaseManager from './components/CaseManager';
 import './App.css';
 
-// The main battlefield - where justice meets reality
-// Built from pain, powered by truth, destined for victory
+// Justice Companion Main Application
+// Providing accessible legal information and support
 
 const App = () => {
-  // State management - the war room intelligence
+  // Application state management
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(true); // Assume accepted after first run
   const [currentCase, setCurrentCase] = useState(null);
   const [cases, setCases] = useState([]);
@@ -19,81 +19,132 @@ const App = () => {
   const [pendingFact, setPendingFact] = useState(null);
   const [messages, setMessages] = useState([]);
   
-  // References - direct lines to the battlefield
+  // Component references
   const chatRef = useRef(null);
 
-  // Boot sequence - loading the ammunition
+  // Initialize application
   useEffect(() => {
-    // Check disclaimer status
-    window.justiceAPI.onShowDisclaimer(() => {
-      setDisclaimerAccepted(false);
-    });
+    // Auto-run UI tests in development
+    if (process.env.NODE_ENV !== 'production') {
+      setTimeout(() => {
+        const script = document.createElement('script');
+        script.src = './test-interface.js';
+        document.body.appendChild(script);
+      }, 2000);
+    }
 
-    // Load cases from the vault
-    loadCases();
+    // Check if justiceAPI is available
+    if (window.justiceAPI) {
+      // Check disclaimer status
+      window.justiceAPI.onShowDisclaimer(() => {
+        setDisclaimerAccepted(false);
+      });
 
-    // Listen for facts found in documents
-    window.justiceAPI.onFactFound((event, fact) => {
-      setPendingFact(fact);
-    });
+      // Load saved cases
+      loadCases();
+
+      // Listen for facts found in documents
+      window.justiceAPI.onFactFound((event, fact) => {
+        setPendingFact(fact);
+      });
+    }
 
     // Cleanup on unmount
     return () => {
-      window.justiceAPI.removeAllListeners('show-disclaimer');
-      window.justiceAPI.removeAllListeners('fact-found');
+      if (window.justiceAPI) {
+        window.justiceAPI.removeAllListeners('show-disclaimer');
+        window.justiceAPI.removeAllListeners('fact-found');
+      }
     };
   }, []);
 
-  // Load all cases - gathering the war chest
+  // Load all cases from storage
   const loadCases = async () => {
     try {
-      const loadedCases = await window.justiceAPI.getCases();
-      setCases(loadedCases);
-      
-      // Auto-select first case if exists
-      if (loadedCases.length > 0 && !currentCase) {
-        setCurrentCase(loadedCases[0]);
+      if (window.justiceAPI) {
+        const result = await window.justiceAPI.getCases();
+        const loadedCases = result.success ? result.cases : [];
+        setCases(loadedCases);
+
+        // Auto-select first case if exists
+        if (loadedCases.length > 0 && !currentCase) {
+          setCurrentCase(loadedCases[0]);
+        }
       }
     } catch (error) {
       console.error('Failed to load cases:', error);
+      setCases([]); // Set empty array on error
     }
   };
 
-  // Accept the warrior's oath
+  // Accept disclaimer
   const handleAcceptDisclaimer = async () => {
-    await window.justiceAPI.acceptDisclaimer();
-    setDisclaimerAccepted(true);
+    try {
+      if (window.justiceAPI) {
+        await window.justiceAPI.acceptDisclaimer();
+        setDisclaimerAccepted(true);
+      }
+    } catch (error) {
+      console.error('Failed to accept disclaimer:', error);
+    }
   };
 
-  // Create new case - birthing a new battle
+  // Create new case
   const createNewCase = async (caseData) => {
-    const result = await window.justiceAPI.saveCase(caseData);
-    if (result.success) {
-      await loadCases();
-      setCurrentCase(result.case);
-      setActiveView('chat');
+    try {
+      if (window.justiceAPI) {
+        const result = await window.justiceAPI.saveCase(caseData);
+        if (result.success) {
+          await loadCases();
+          setCurrentCase(result.case);
+          setActiveView('chat');
+        }
+        return result;
+      }
+    } catch (error) {
+      console.error('Failed to create new case:', error);
+      return { success: false, error: error.message };
     }
-    return result;
   };
 
   // Confirm a fact - adding truth to the arsenal
   const confirmFact = async (factData) => {
-    const enrichedFact = {
-      ...factData,
-      caseId: currentCase?.id,
-      context: 'user-confirmed'
-    };
-    
-    await window.justiceAPI.saveFact(enrichedFact);
-    setPendingFact(null);
-    
-    // Add to chat as confirmed
-    setMessages(prev => [...prev, {
-      type: 'system',
-      content: `✓ Fact confirmed: ${factData.label} - ${factData.value}`,
-      timestamp: new Date().toISOString()
-    }]);
+    try {
+      if (window.justiceAPI) {
+        const enrichedFact = {
+          ...factData,
+          caseId: currentCase?.id,
+          context: 'user-confirmed'
+        };
+
+        await window.justiceAPI.saveFact(enrichedFact);
+        setPendingFact(null);
+
+        // Add to chat as confirmed
+        setMessages(prev => [...prev, {
+          type: 'system',
+          content: `✓ Fact confirmed: ${factData.label} - ${factData.value}`,
+          timestamp: new Date().toISOString()
+        }]);
+      }
+    } catch (error) {
+      console.error('Failed to confirm fact:', error);
+      setPendingFact(null); // Still clear the pending fact
+    }
   };
+
+  // Check if API is available
+  if (typeof window === 'undefined' || !window.justiceAPI) {
+    return (
+      <div className="app-container">
+        <div className="loading-api">
+          <h2>⚖️ Justice Companion</h2>
+          <p>Initializing legal assistance system...</p>
+          <div className="loading-spinner">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   // The main render - where UI meets destiny
   return (
@@ -103,10 +154,10 @@ const App = () => {
         <Disclaimer onAccept={handleAcceptDisclaimer} />
       )}
 
-      {/* Main battlefield */}
+      {/* Main application interface */}
       {disclaimerAccepted && (
         <>
-          {/* Sidebar - Command center navigation */}
+          {/* Sidebar navigation */}
           <Sidebar
             isOpen={sidebarOpen}
             onToggle={() => setSidebarOpen(!sidebarOpen)}
@@ -116,7 +167,7 @@ const App = () => {
             cases={cases}
           />
 
-          {/* Main content area - Where battles are fought */}
+          {/* Main content area */}
           <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
             {activeView === 'chat' && (
               <ChatInterface
@@ -127,7 +178,7 @@ const App = () => {
                 onFactFound={(fact) => setPendingFact(fact)}
               />
             )}
-            
+
             {activeView === 'cases' && (
               <CaseManager
                 cases={cases}
@@ -141,14 +192,14 @@ const App = () => {
             {activeView === 'documents' && (
               <div className="coming-soon">
                 <h2>Document Vault</h2>
-                <p>Under construction. Your evidence locker is being fortified.</p>
+                <p>Coming soon. Document management features are in development.</p>
               </div>
             )}
 
             {activeView === 'timeline' && (
               <div className="coming-soon">
-                <h2>Battle Timeline</h2>
-                <p>Coming soon. Every moment of your fight, documented.</p>
+                <h2>Case Timeline</h2>
+                <p>Coming soon. Track important dates and events in your case.</p>
               </div>
             )}
           </div>

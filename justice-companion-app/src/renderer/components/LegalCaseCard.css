@@ -1,0 +1,236 @@
+/* Legal Case Card Styles - Justice Companion */
+/* Built from pain, powered by truth */
+
+.legal-case-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin: 8px 0;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.legal-case-card:hover {
+  background: #2a2a2a;
+  border-color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Urgency Classes */
+.urgency-high {
+  border-left: 4px solid #dc3545;
+}
+
+.urgency-medium {
+  border-left: 4px solid #ffc107;
+}
+
+.urgency-low {
+  border-left: 4px solid #28a745;
+}
+
+/* Desktop View */
+.desktop-view {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.case-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.case-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-value {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+/* Status Badge */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-waiting {
+  background: #6c757d;
+  color: white;
+}
+
+.status-active {
+  background: #007bff;
+  color: white;
+}
+
+.status-review {
+  background: #ffc107;
+  color: #212529;
+}
+
+.status-corrections {
+  background: #fd7e14;
+  color: white;
+}
+
+.status-court {
+  background: #dc3545;
+  color: white;
+}
+
+.status-decision {
+  background: #6f42c1;
+  color: white;
+}
+
+.status-closed {
+  background: #28a745;
+  color: white;
+}
+
+.status-default {
+  background: #495057;
+  color: white;
+}
+
+/* Deadline */
+.deadline-text {
+  color: #ffc107;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Mobile View */
+.mobile-view {
+  display: none;
+}
+
+.case-title h4 {
+  color: #e0e0e0;
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.mobile-field {
+  margin: 8px 0;
+  color: #e0e0e0;
+}
+
+.mobile-field strong {
+  color: #ffc107;
+  margin-right: 8px;
+}
+
+.deadline-mobile {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #333;
+}
+
+.case-description {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #333;
+}
+
+.case-description p {
+  color: #ccc;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Urgency Indicator */
+.urgency-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.urgency-indicator.urgency-high {
+  background: #dc3545;
+  color: white;
+}
+
+.urgency-indicator.urgency-medium {
+  background: #ffc107;
+  color: #212529;
+}
+
+.urgency-indicator.urgency-low {
+  background: #28a745;
+  color: white;
+}
+
+.urgency-text {
+  font-size: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+  }
+
+  .legal-case-card {
+    padding: 12px;
+  }
+
+  .urgency-indicator {
+    position: static;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+}
+
+/* Dark theme enhancements */
+.legal-case-card:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Animation for status changes */
+.status-badge {
+  transition: all 0.3s ease;
+}
+
+.case-field:hover .field-value {
+  color: #ffc107;
+}
+
+/* Justice-specific styling */
+.legal-case-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #007bff, #28a745, #ffc107);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.legal-case-card:hover::before {
+  opacity: 1;
+}

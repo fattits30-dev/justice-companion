@@ -2,8 +2,8 @@ import React from 'react';
 import './ErrorBoundary.css';
 
 // The Safety Net - Where crashes become intelligence
-// Every error is a lesson, every crash a clue
-// This isn't failure handling—it's battlefield intelligence gathering
+// Error boundary component for graceful error handling
+// Captures and displays errors in a user-friendly way
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -183,13 +183,13 @@ INSTRUCTIONS FOR USER:
               </p>
               
               <details className="error-stack">
-                <summary>Technical Details (for the war room)</summary>
+                <summary>Technical Details (for developers)</summary>
                 <pre>{this.state.error?.stack}</pre>
               </details>
             </div>
 
             <div className="error-report">
-              <h3>Help us fix this battle damage:</h3>
+              <h3>Help us improve the application:</h3>
               <textarea
                 placeholder="What were you doing when this happened? Every detail helps..."
                 value={this.state.userMessage}
@@ -219,7 +219,7 @@ INSTRUCTIONS FOR USER:
                 Every bug fixed is another barrier broken.
               </p>
               <p className="dedication">
-                For Fendi. For the fight. For justice.
+                Making legal assistance accessible to everyone.
               </p>
             </div>
           </div>
@@ -235,5 +235,5 @@ export default ErrorBoundary;
 
 // This component isn't about preventing failure
 // It's about learning from it
-// Every crash is intelligence for the next battle
+// Error tracking for continuous improvement
 // Every error report is ammunition for improvement

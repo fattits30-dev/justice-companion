@@ -1,0 +1,463 @@
+/* Justice Companion Fact Confirmation Styles */
+/* TRUTH VERIFICATION: Where raw data becomes verified ammunition */
+
+.fact-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+  animation: fadeInOverlay 0.3s ease-in;
+}
+
+.fact-confirm-container {
+  max-width: 600px;
+  width: 90%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #dc3545;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(220, 53, 69, 0.4);
+  animation: slideInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.fact-confirm-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+  animation: progressBar 10s linear;
+}
+
+/* Header Section */
+.fact-confirm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(220, 53, 69, 0.3);
+}
+
+.fact-icon {
+  font-size: 2rem;
+  background: linear-gradient(135deg, #dc3545 0%, #ffc107 100%);
+  padding: 0.5rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.fact-confirm-header h3 {
+  flex: 1;
+  color: #dc3545;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+}
+
+.auto-close-timer {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+  color: #000;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  min-width: 50px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(255, 193, 7, 0.4);
+  animation: timerPulse 1s infinite;
+}
+
+/* Content Section */
+.fact-confirm-content {
+  margin-bottom: 2rem;
+}
+
+.fact-label {
+  color: #ffc107;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.fact-value {
+  background: rgba(40, 167, 69, 0.2);
+  border: 2px solid rgba(40, 167, 69, 0.4);
+  border-radius: 8px;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  word-break: break-all;
+  text-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+.fact-edit-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.fact-edit-input:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.fact-context {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.context-label {
+  color: #17a2b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.context-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 3px solid #17a2b8;
+}
+
+.fact-warning {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(220, 53, 69, 0.2) 100%);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #ffc107;
+  font-weight: 500;
+  text-align: center;
+  animation: warningGlow 2s infinite alternate;
+}
+
+/* Actions Section */
+.fact-confirm-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.confirm-button,
+.edit-button,
+.skip-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.confirm-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.confirm-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+}
+
+.confirm-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.edit-button {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+}
+
+.edit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+  background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+  color: white;
+}
+
+.skip-button {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+}
+
+.skip-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+/* Button Shine Effect */
+.confirm-button::before,
+.edit-button::before,
+.skip-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.confirm-button:hover::before,
+.edit-button:hover::before,
+.skip-button:hover::before {
+  left: 100%;
+}
+
+/* Footer Section */
+.fact-confirm-footer {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.fact-confirm-footer p {
+  margin: 0.25rem 0;
+}
+
+.fact-confirm-footer strong {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Animations */
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes progressBar {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes timerPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px rgba(255, 193, 7, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.6);
+  }
+}
+
+@keyframes warningGlow {
+  from {
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fact-confirm-container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .fact-confirm-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .fact-confirm-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .fact-confirm-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .confirm-button,
+  .edit-button,
+  .skip-button {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fact-confirm-container {
+    padding: 1rem;
+  }
+
+  .fact-icon {
+    font-size: 1.5rem;
+    padding: 0.4rem;
+  }
+
+  .fact-confirm-header h3 {
+    font-size: 1rem;
+  }
+
+  .fact-value,
+  .fact-edit-input {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .auto-close-timer {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .fact-confirm-container {
+    border-width: 3px;
+    background: #000000;
+  }
+
+  .fact-value {
+    border-width: 3px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .fact-edit-input {
+    border-width: 3px;
+  }
+
+  .confirm-button,
+  .edit-button,
+  .skip-button {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .fact-confirm-overlay,
+  .fact-confirm-container,
+  .confirm-button,
+  .edit-button,
+  .skip-button,
+  .auto-close-timer {
+    animation: none;
+    transition: none;
+  }
+
+  .fact-confirm-container::before {
+    display: none;
+  }
+
+  .confirm-button:hover,
+  .edit-button:hover,
+  .skip-button:hover {
+    transform: none;
+  }
+
+  .confirm-button::before,
+  .edit-button::before,
+  .skip-button::before {
+    display: none;
+  }
+}
+
+/* Focus States for Accessibility */
+.confirm-button:focus,
+.edit-button:focus,
+.skip-button:focus,
+.fact-edit-input:focus {
+  outline: 3px solid rgba(220, 53, 69, 0.5);
+  outline-offset: 2px;
+}
+
+/* Emergency State - When Timer Gets Low */
+.auto-close-timer.critical {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  animation: criticalTimer 0.5s infinite;
+}
+
+@keyframes criticalTimer {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

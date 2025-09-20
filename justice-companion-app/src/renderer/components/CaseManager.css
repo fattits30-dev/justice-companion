@@ -1,0 +1,1013 @@
+/* Justice Companion Case Manager Styles */
+/* Enhanced for Legal Tech - Professional Case Management Interface */
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f8;
+  --bg-tertiary: #ececf1;
+  --accent-green: #10a37f;
+  --accent-green-hover: #0d8f6f;
+  --text-primary: #2d333a;
+  --text-secondary: #6e767d;
+  --text-muted: #8e959c;
+  --border-light: #e5e5e5;
+  --border-medium: #d9d9e3;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus management */
+:focus {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 2px;
+}
+
+.case-manager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* Header Section */
+.case-manager-header {
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  position: relative;
+}
+
+.case-manager-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent-green);
+}
+
+.case-manager-header h2 {
+  color: var(--text-primary);
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.5px;
+}
+
+.case-count {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.new-case-button {
+  background: var(--accent-green);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.new-case-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.new-case-button:hover::before {
+  left: 100%;
+}
+
+.new-case-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background: var(--accent-green-hover);
+}
+
+/* New Case Form */
+.new-case-form {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: var(--shadow-md);
+  animation: slideDown 0.4s ease-out;
+}
+
+.new-case-form h3 {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem 0;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  padding: 0.75rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+  background: var(--bg-primary);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.create-button,
+.cancel-button {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.create-button {
+  background: var(--accent-green);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.create-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background: var(--accent-green-hover);
+}
+
+.cancel-button {
+  background: var(--text-muted);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.cancel-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background: #6c757d;
+}
+
+/* Cases List */
+.cases-list {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* No Cases State */
+.no-cases {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 3rem;
+}
+
+.no-cases-title {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.5px;
+}
+
+.no-cases-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+}
+
+.no-cases-quote {
+  color: var(--accent-green);
+  font-size: 1rem;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Case Cards */
+.case-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.case-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.case-card:hover::before {
+  left: 100%;
+}
+
+.case-card:hover {
+  border-color: var(--accent-green);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-secondary);
+}
+
+.case-card.active {
+  border-color: var(--accent-green);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-md);
+}
+
+.case-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.case-icon {
+  font-size: 2rem;
+  animation: pulse 2s infinite;
+}
+
+.case-title {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.case-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.case-type {
+  color: var(--accent-green);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.case-opponent {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.case-stats {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem 0;
+  justify-content: space-around;
+}
+
+.case-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  color: var(--accent-green);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.case-description {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-green);
+}
+
+.case-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.action-button {
+  background: var(--accent-green);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background: var(--accent-green-hover);
+}
+
+/* Footer */
+.case-manager-footer {
+  background: var(--bg-secondary);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.refresh-button {
+  background: var(--text-muted);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.refresh-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  background: #6c757d;
+}
+
+.footer-message {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: right;
+  margin: 0;
+  flex: 1;
+  margin-left: 2rem;
+}
+
+.footer-message strong {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+/* Custom Scrollbar */
+.cases-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cases-list::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.cases-list::-webkit-scrollbar-thumb {
+  background: var(--accent-green);
+  border-radius: 4px;
+}
+
+.cases-list::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-green-hover);
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .case-manager-header {
+    padding: 1.5rem;
+  }
+
+  .case-manager-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .cases-list {
+    padding: 1rem;
+  }
+
+  .case-card {
+    padding: 1rem;
+  }
+
+  .case-stats {
+    gap: 1rem;
+  }
+
+  .case-card-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .case-title {
+    font-size: 1.1rem;
+  }
+
+  .new-case-form {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .create-button,
+  .cancel-button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .case-manager-footer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .footer-message {
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .case-manager-header {
+    padding: 1rem;
+  }
+
+  .case-manager-header h2 {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+  }
+
+  .new-case-button {
+    width: 100%;
+  }
+
+  .case-card {
+    padding: 0.75rem;
+  }
+
+  .case-icon {
+    font-size: 1.5rem;
+  }
+
+  .case-title {
+    font-size: 1rem;
+  }
+
+  .case-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1rem;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .case-manager {
+    background: #000000;
+  }
+
+  .case-card {
+    border-width: 3px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .new-case-form {
+    border-width: 3px;
+    background: #000000;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border-width: 3px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .new-case-button,
+  .create-button,
+  .cancel-button,
+  .action-button,
+  .refresh-button {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .case-card,
+  .new-case-button,
+  .create-button,
+  .cancel-button,
+  .action-button,
+  .refresh-button,
+  .new-case-form {
+    animation: none;
+    transition: none;
+  }
+
+  .case-card:hover,
+  .new-case-button:hover,
+  .create-button:hover,
+  .cancel-button:hover,
+  .action-button:hover,
+  .refresh-button:hover {
+    transform: none;
+  }
+
+  .case-card::before,
+  .new-case-button::before {
+    display: none;
+  }
+
+  .case-icon {
+    animation: none;
+  }
+}
+
+/* Focus States for Accessibility */
+.new-case-button:focus,
+.create-button:focus,
+.cancel-button:focus,
+.action-button:focus,
+.refresh-button:focus,
+.case-card:focus,
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: 3px solid rgba(220, 53, 69, 0.5);
+  outline-offset: 2px;
+}
+
+.case-card:focus {
+  outline-offset: 4px;
+}
+
+/* Enhanced Legal Tech Features */
+
+/* Header summary enhancements */
+.header-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.count-number {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent-green);
+}
+
+.count-label {
+  margin-left: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.urgency-summary {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.urgency-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.urgency-indicator.critical {
+  background: #ef4444;
+  animation: urgent-pulse 2s infinite;
+}
+
+.urgency-indicator.high {
+  background: #f59e0b;
+}
+
+.urgency-indicator.medium {
+  background: #eab308;
+  color: var(--text-primary);
+}
+
+/* Enhanced new case button */
+.new-case-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button-icon {
+  font-size: 1.2rem;
+}
+
+.button-text {
+  font-weight: 600;
+}
+
+/* Enhanced form styling */
+.form-label {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.required {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.form-help {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.create-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--text-muted);
+}
+
+.create-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enhanced no cases state */
+.no-cases-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.getting-started {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  text-align: left;
+  max-width: 400px;
+}
+
+.getting-started h4 {
+  color: var(--accent-green);
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.getting-started ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.getting-started li {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* Enhanced case cards */
+.case-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.urgency-indicator-small {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+
+.case-card.urgency-critical .urgency-indicator-small {
+  background: #ef4444;
+  animation: urgent-pulse 2s infinite;
+}
+
+.case-card.urgency-high .urgency-indicator-small {
+  background: #f59e0b;
+}
+
+.case-card.urgency-medium .urgency-indicator-small {
+  background: #eab308;
+}
+
+.case-card.urgency-low .urgency-indicator-small {
+  background: #6c757d;
+}
+
+.active-badge {
+  background: var(--accent-green);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Enhanced case stats */
+.stat-icon {
+  font-size: 1rem;
+  margin-right: 0.25rem;
+  opacity: 0.8;
+}
+
+/* Enhanced action buttons */
+.action-button.primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent-green);
+}
+
+.action-button.primary:hover {
+  background: var(--accent-green-hover);
+}
+
+.urgent-badge {
+  background: #ef4444;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  animation: urgent-pulse 2s infinite;
+}
+
+/* Enhanced footer */
+.footer-message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+.encouragement {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.support-info {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  justify-content: flex-end;
+}
+
+.info-icon {
+  font-size: 1rem;
+}
+
+/* Animations */
+@keyframes urgent-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Keyboard navigation enhancements */
+.case-card[role="button"]:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.3);
+}
+
+.case-card[role="button"]:hover {
+  border-color: var(--accent-green);
+}
+
+.case-card.active[role="button"] {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.5);
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 768px) {
+  .header-summary {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .urgency-summary {
+    align-self: center;
+  }
+
+  .new-case-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .getting-started {
+    max-width: none;
+    width: 100%;
+  }
+
+  .footer-message {
+    text-align: center;
+  }
+
+  .support-info {
+    justify-content: center;
+  }
+
+  .case-status {
+    justify-content: center;
+  }
+
+  .active-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* Print styles for case documentation */
+@media print {
+  .case-manager {
+    background: white;
+    color: black;
+  }
+
+  .case-manager-header,
+  .new-case-form,
+  .case-manager-footer {
+    display: none;
+  }
+
+  .case-card {
+    border: 2px solid #000;
+    margin-bottom: 1rem;
+    page-break-inside: avoid;
+    background: white;
+  }
+
+  .case-card:hover::before,
+  .case-card::before {
+    display: none;
+  }
+
+  .case-title {
+    color: #000;
+    font-size: 1.2rem;
+  }
+
+  .case-type,
+  .stat-value {
+    color: #333;
+  }
+
+  .case-description {
+    background: #f8f9fa;
+    border-left-color: #333;
+  }
+}
