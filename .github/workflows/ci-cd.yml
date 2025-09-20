@@ -83,7 +83,7 @@ jobs:
         ${{ matrix.build_command }} || npm run dist
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.artifact_name }}
         path: justice-companion-app/dist/
