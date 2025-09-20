@@ -14,7 +14,7 @@ const App = () => {
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(true); // Assume accepted after first run
   const [currentCase, setCurrentCase] = useState(null);
   const [cases, setCases] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeView, setActiveView] = useState('chat'); // chat, cases, documents, timeline
   const [pendingFact, setPendingFact] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -157,6 +157,18 @@ const App = () => {
       {/* Main application interface */}
       {disclaimerAccepted && (
         <>
+          {/* Hamburger menu button - always visible */}
+          <button
+            className={`hamburger-menu ${sidebarOpen ? 'sidebar-open' : ''}`}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle sidebar"
+            title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+
           {/* Sidebar navigation */}
           <Sidebar
             isOpen={sidebarOpen}

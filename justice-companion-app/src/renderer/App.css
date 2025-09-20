@@ -64,10 +64,54 @@ body {
   min-width: 0;
   position: relative;
   transition: margin-left var(--transition-normal) ease;
+  margin-left: 0;
 }
 
 .main-content.sidebar-open {
   margin-left: var(--sidebar-width);
+}
+
+/* Hamburger menu button */
+.hamburger-menu {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 200;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.hamburger-menu:hover {
+  background: var(--hover-bg);
+  border-color: var(--accent-green);
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 1px;
+  transition: all var(--transition-fast);
+}
+
+.hamburger-menu:hover .hamburger-line {
+  background: var(--accent-green);
+}
+
+/* Move hamburger when sidebar is open */
+.hamburger-menu.sidebar-open {
+  left: calc(var(--sidebar-width) + 1rem);
 }
 
 /* Coming soon placeholder */
