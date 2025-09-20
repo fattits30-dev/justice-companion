@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where claude)",
+      "Bash(echo $PATH)",
+      "Read(//c/Users/sava6/AppData/Local/AnthropicClaude/**)",
+      "Bash(powershell:*)",
+      "Bash(del \"C:\\Users\\sava6\\Desktop\\Justice Companion\\justice-companion-app\\fix_path.ps1\")",
+      "Bash(\"/c/Users/sava6/AppData/Local/AnthropicClaude/claude.exe\" --version)",
+      "Read(//c/Users/sava6/AppData/**)",
+      "Bash(cat:*)",
+      "Bash(node:*)",
+      "WebSearch",
+      "Bash(grep:*)",
+      "Bash(echo:*)",
+      "Bash(printenv:*)",
+      "Bash(\"/c/Users/sava6/AppData/Local/AnthropicClaude/claude.exe\" --help)",
+      "Bash(\"/c/Users/sava6/AppData/Roaming/npm/claude\" --help)",
+      "Bash(claude mcp:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(wsl:*)",
+      "Bash(npx @modelcontextprotocol/server-sequentialthinking:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

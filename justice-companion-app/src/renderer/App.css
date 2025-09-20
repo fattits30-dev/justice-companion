@@ -1,0 +1,21 @@
+/* App.css - Main container styles */
+.app-container {
+  display: flex;
+  height: 100vh;
+  background: #1a1a1a;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.main-content.sidebar-open {
+  margin-left: 250px;
+}
+
+.coming-soon {
+  color: #888;
+  text-align: center;
+  padding: 50px;
+}

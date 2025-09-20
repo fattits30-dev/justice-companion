@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(uv:*)",
+      "Read(//c/Users/sava6/AppData/Roaming/Claude/Claude Extensions/ant.dir.cursortouch.windows-mcp/**)",
+      "Bash(set Path=C:Userssava6.localbin)",
+      "Bash(%Path%)",
+      "Bash(C:Userssava6.localbinuv.exe --version)",
+      "Bash(\"/c/Users/sava6/.local/bin/uv.exe\" --version)",
+      "Bash(\"/c/Users/sava6/.local/bin/uv.exe\" run main.py)",
+      "Read(//c/Users/sava6/AppData/Roaming/Claude/**)",
+      "WebFetch(domain:github.com)",
+      "Read(//c/**)",
+      "Bash(\"/c/Users/sava6/.local/bin/uv.exe\" sync)",
+      "Bash(\"/c/Users/sava6/.local/bin/uv.exe\" sync --no-group database-all)",
+      "Bash(python:*)",
+      "Bash(timeout:*)",
+      "Bash(where claude)",
+      "Bash(where claude-desktop)",
+      "Bash(Select-String \"Claude\")",
+      "Bash(findstr:*)",
+      "Bash(set PATH)",
+      "Bash(dir:*)",
+      "Bash(setx:*)",
+      "Bash(test:*)",
+      "Bash(npx:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)",
+      "Bash(gh:*)",
+      "Bash(git config:*)",
+      "WebFetch(domain:mcpservers.org)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
