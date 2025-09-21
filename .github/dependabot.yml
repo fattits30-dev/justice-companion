@@ -5,18 +5,35 @@ updates:
   - package-ecosystem: "npm"
     directory: "/justice-companion-app"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
       time: "04:00"
+      timezone: "UTC"
     open-pull-requests-limit: 10
     reviewers:
-      - "fattits30-dev"
+      - "@sava6"
+    assignees:
+      - "@sava6"
     labels:
       - "dependencies"
       - "security"
     commit-message:
       prefix: "deps"
+      prefix-development: "deps-dev"
       include: "scope"
+    # Group minor and patch updates together
+    groups:
+      minor-patch-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Ignore major version updates for Electron (require manual review)
+    ignore:
+      - dependency-name: "electron"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-prerelease"]
 
   # Keep GitHub Actions up to date
   - package-ecosystem: "github-actions"

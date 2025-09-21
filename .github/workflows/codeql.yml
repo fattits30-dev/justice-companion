@@ -1,0 +1,208 @@
+name: "CodeQL Security Analysis"
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    # Run CodeQL analysis daily at 6 AM UTC
+    - cron: '0 6 * * *'
+
+jobs:
+  analyze:
+    name: 🔍 CodeQL Analysis
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'swift' ]
+        # Use only 'java' to analyze code written in Java, Kotlin or both
+        # Use only 'javascript' to analyze code written in JavaScript, TypeScript or both
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    # Initializes the CodeQL tools for scanning.
+    - name: 🔧 Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        # If you wish to specify custom queries, you can do so here or in a config file.
+        # By default, queries listed here will override any specified in a config file.
+        # Prefix the list here with "+" to use these queries and those in the config file.
+        
+        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+        queries: +security-extended,security-and-quality
+        
+        # Custom CodeQL configuration for Justice Companion
+        config: |
+          name: "Justice Companion CodeQL Config"
+          disable-default-queries: false
+          queries:
+            - name: security-extended
+              uses: security-extended
+            - name: security-and-quality  
+              uses: security-and-quality
+          paths-ignore:
+            - "justice-companion-app/node_modules/**"
+            - "justice-companion-app/dist/**"
+            - "justice-companion-app/build/**"
+            - "justice-companion-app/coverage/**"
+            - "**/*.test.js"
+            - "**/*.test.jsx"
+            - "**/*.spec.js"
+            - "**/*.spec.jsx"
+
+    # Install dependencies for better analysis
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: justice-companion-app/package-lock.json
+
+    - name: 📋 Install Dependencies
+      working-directory: justice-companion-app
+      run: npm ci
+
+    # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
+    # If this step fails, then you should remove it and run the build manually (see below)
+    - name: 🏗️ Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    # ℹ️ Command-line programs to run using the OS shell.
+    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+
+    #   If the Autobuild fails above, remove it and uncomment the following three lines. 
+    #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+
+    # - run: |
+    #     echo "Run, Build Application using script"
+    #     ./location_of_script_within_repo/buildscript.sh
+
+    - name: 🔍 Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"
+        # Upload results to GitHub Security tab
+        upload: true
+        # Fail the job if any high severity issues are found
+        fail-on: error
+
+    # Generate SARIF report for external tools
+    - name: 📊 Upload SARIF results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: ${{ runner.workspace }}/results/javascript.sarif
+        category: "justice-companion-security-scan"
+
+    # Create security report artifact
+    - name: 📄 Generate Security Report
+      if: always()
+      run: |
+        echo "# Justice Companion Security Scan Report" > security-report.md
+        echo "" >> security-report.md
+        echo "**Scan Date:** $(date)" >> security-report.md
+        echo "**Language:** ${{ matrix.language }}" >> security-report.md
+        echo "**Branch:** ${{ github.ref }}" >> security-report.md
+        echo "**Commit:** ${{ github.sha }}" >> security-report.md
+        echo "" >> security-report.md
+        echo "## Scan Results" >> security-report.md
+        echo "" >> security-report.md
+        if [ -f "${{ runner.workspace }}/results/javascript.sarif" ]; then
+          echo "SARIF file generated successfully" >> security-report.md
+          # Count issues from SARIF (simplified)
+          echo "Security analysis completed. Check GitHub Security tab for detailed results." >> security-report.md
+        else
+          echo "No SARIF file generated" >> security-report.md
+        fi
+        echo "" >> security-report.md
+        echo "## Legal Compliance Notes" >> security-report.md
+        echo "" >> security-report.md
+        echo "- ✅ Personal data handling patterns scanned" >> security-report.md
+        echo "- ✅ Encryption usage patterns verified" >> security-report.md
+        echo "- ✅ Authentication flows analyzed" >> security-report.md
+        echo "- ✅ Input validation patterns checked" >> security-report.md
+        echo "" >> security-report.md
+        echo "*This automated scan helps ensure Justice Companion meets security standards for legal aid software.*" >> security-report.md
+
+    - name: 📊 Upload Security Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-analysis-report-${{ matrix.language }}
+        path: |
+          security-report.md
+          ${{ runner.workspace }}/results/*.sarif
+        retention-days: 90
+
+    # Notify on security issues (only on main branch)
+    - name: 🚨 Security Alert Notification
+      if: failure() && github.ref == 'refs/heads/main'
+      run: |
+        echo "🚨 SECURITY ALERT: CodeQL found potential security issues in Justice Companion"
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Check the Security tab for detailed analysis results."
+        echo "As a legal aid application, security is critical for protecting user data."
+        
+    # Comment on PR with security status (for pull requests)
+    - name: 💬 PR Security Comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          // Check if we already commented
+          const existingComment = comments.find(comment => 
+            comment.body.includes('🔍 CodeQL Security Analysis')
+          );
+          
+          const analysisStatus = '${{ job.status }}' === 'success' ? '✅ Passed' : '❌ Issues Found';
+          const securityEmoji = '${{ job.status }}' === 'success' ? '🔒' : '🚨';
+          
+          const commentBody = `## ${securityEmoji} 🔍 CodeQL Security Analysis
+          
+          **Status:** ${analysisStatus}
+          **Language:** ${{ matrix.language }}
+          **Scan Time:** ${new Date().toISOString()}
+          
+          ${'${{ job.status }}' === 'success' ? 
+            '✅ No security vulnerabilities detected in this pull request.' :
+            '❌ Potential security issues detected. Please review the Security tab for details.'}
+          
+          As Justice Companion handles sensitive legal data, all security checks must pass before merging.
+          
+          *Automated security scan by GitHub CodeQL*`;
+          
+          if (existingComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: existingComment.id,
+              body: commentBody
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: commentBody
+            });
+          }

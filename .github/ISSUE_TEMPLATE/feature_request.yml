@@ -1,0 +1,105 @@
+name: "✨ Feature Request"
+description: "Suggest a new feature for Justice Companion"
+title: "[Feature]: "
+labels: ["enhancement", "needs-review"]
+assignees: ["sava6"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature! Justice Companion exists to help legal aid organizations serve more people.
+        
+        **⚖️ Focus:** Features should help legal professionals provide better aid to those who need it most.
+        
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Feature Category"
+      description: "What area would this feature improve?"
+      options:
+        - "AI Legal Assistant"
+        - "Case Management"
+        - "Document Handling"
+        - "User Interface"
+        - "Security & Privacy"
+        - "Integration"
+        - "Accessibility"
+        - "Other"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem Statement"
+      description: "What legal work problem does this solve?"
+      placeholder: "Legal aid workers currently struggle with... This makes it hard to help clients because..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed Solution"
+      description: "How should this feature work?"
+      placeholder: "Add a feature that allows users to... The interface would show... This would help by..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternative Solutions"
+      description: "Have you considered other approaches?"
+      placeholder: "I also considered... but the proposed solution is better because..."
+      
+  - type: dropdown
+    id: impact
+    attributes:
+      label: "Expected Impact"
+      description: "How many legal aid workers would benefit?"
+      options:
+        - "High - Most users would benefit"
+        - "Medium - Many users would benefit"
+        - "Low - Some users would benefit"
+        - "Specialized - Specific use case"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: "Urgency"
+      description: "How urgent is this need?"
+      options:
+        - "Critical - Blocking important legal work"
+        - "High - Would significantly improve workflow"
+        - "Medium - Nice to have improvement"
+        - "Low - Future enhancement"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: use_case
+    attributes:
+      label: "Real-world Use Case"
+      description: "Describe a specific scenario where this would help"
+      placeholder: "A legal aid lawyer is helping a tenant with an eviction case. They need to..."
+    validations:
+      required: true
+      
+  - type: checkboxes
+    id: considerations
+    attributes:
+      label: "Legal & Technical Considerations"
+      options:
+        - label: "This feature respects client privacy and confidentiality"
+          required: true
+        - label: "This feature would comply with legal ethics requirements"
+          required: true
+        - label: "I have considered the security implications"
+          required: false
+        - label: "This feature would be accessible to users with disabilities"
+          required: false
+        - label: "I am willing to help test this feature"
+          required: false
