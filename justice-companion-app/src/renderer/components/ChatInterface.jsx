@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import './ChatInterface.css';
 
 // Legal tech form validation utilities
@@ -62,15 +62,19 @@ const ChatInterface = forwardRef(({ currentCase, messages, setMessages, onFactFo
   const inputRef = useRef(null);
   const formRef = useRef(null);
   
-  // Expose methods to parent - command and control
+  // Expose methods to parent - command and control (Context7 optimized)
+  const addMessage = useCallback((message) => {
+    setMessages(prev => [...prev, message]);
+  }, []);
+
+  const clearChat = useCallback(() => {
+    setMessages([]);
+  }, []);
+
   useImperativeHandle(ref, () => ({
-    addMessage: (message) => {
-      setMessages(prev => [...prev, message]);
-    },
-    clearChat: () => {
-      setMessages([]);
-    }
-  }));
+    addMessage,
+    clearChat
+  }), [addMessage, clearChat]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -104,10 +108,10 @@ How can I help you today?`,
       };
       setMessages([greeting]);
     }
-  }, [currentCase]);
+  }, []);
 
-  // Handle input changes with validation and character counting
-  const handleInputChange = (e) => {
+  // Handle input changes with validation and character counting (Context7 optimized)
+  const handleInputChange = useCallback((e) => {
     const value = e.target.value;
     setInputValue(value);
     setCharacterCount(value.length);
@@ -116,10 +120,10 @@ How can I help you today?`,
     if (inputErrors.length > 0 && value.trim()) {
       setInputErrors([]);
     }
-  };
+  }, [inputErrors.length]);
 
-  // Enhanced form submission with comprehensive validation
-  const handleSubmit = async (e) => {
+  // Enhanced form submission with comprehensive validation (Context7 optimized)
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
     // Validate input
@@ -168,7 +172,7 @@ How can I help you today?`,
       setIsSubmitting(false);
       setIsTyping(false);
     }
-  };
+  }, [inputValue, inputErrors, currentCase]);
 
   // Extract hard facts from the chaos
   const extractFacts = async (text) => {
@@ -224,7 +228,13 @@ How can I help you today?`,
     // Trigger fact confirmation for each found fact
     if (foundFacts.length > 0) {
       // Process first fact, others will queue
-      onFactFound(foundFacts[0]);
+      if (typeof onFactFound === "function") {
+        try {
+          onFactFound(foundFacts[0]);
+        } catch (error) {
+          console.warn("onFactFound failed:", error);
+        }
+      }
       
       // Show in chat that we found facts
       setMessages(prev => [...prev, {
@@ -239,9 +249,16 @@ How can I help you today?`,
 
   // Process with AI - enhanced legal assistant with Ollama integration
   const processWithAI = async (input) => {
+    console.log("🔥 DEBUG: processWithAI called with input:", input);
     try {
       // Generate session ID for conversation continuity
       const sessionId = currentCase?.id || `chat_${Date.now()}`;
+
+      console.log('🚀 Justice Companion AI Request Starting:', {
+        input: input.substring(0, 100) + '...',
+        sessionId,
+        timestamp: new Date().toISOString()
+      });
 
       // Call the enhanced AI API
       const aiResponse = await window.justiceAPI.aiChat(input, sessionId, {
@@ -249,47 +266,44 @@ How can I help you today?`,
         max_tokens: 2048
       });
 
-      if (aiResponse.success) {
-        const response = aiResponse.response;
+      console.log('📥 AI Response Received:', {
+        success: aiResponse.success,
+        hasResponse: !!aiResponse.response,
+        responseType: typeof aiResponse.response,
+        responseLength: (aiResponse.response?.content?.length || (typeof aiResponse.response === 'string' ? aiResponse.response.length : 0)),
+        responsePreview: (aiResponse.response?.content || aiResponse.response || '').substring(0, 100),
+        fullResponse: aiResponse.response,
+        error: aiResponse.error?.message || 'none'
+      });
 
-        // Add AI response with metadata
+      if (aiResponse.success) {
+        // FIXED: Extract content from the proper IPC response structure
+        console.log('DEBUG: Full aiResponse structure:', JSON.stringify(aiResponse, null, 2));
+
+        // IPC returns { success: true, response: "content here", model: "...", ... }
+        const responseContent = aiResponse.response || aiResponse.content || 'No response received';
+
+        console.log('DEBUG: Extracted responseContent:', responseContent);
+
+        // Add AI response with metadata - handle both response formats
         const aiMessage = {
           type: 'ai',
-          content: response.content,
+          content: responseContent,
           timestamp: new Date().toISOString(),
           id: `ai-${Date.now()}`,
           metadata: {
-            confidence: response.confidence,
-            riskLevel: response.riskLevel,
-            domain: response.domain,
-            fromCache: response.fromCache,
-            sources: response.sources,
-            responseTime: aiResponse.metadata?.responseTime
+            model: aiResponse.model,
+            processingTime: aiResponse.processingTime,
+            fallback: aiResponse.fallback,
+            sessionId: aiResponse.sessionId,
+            responseTime: aiResponse.processingTime
           }
         };
 
         setMessages(prev => [...prev, aiMessage]);
-        announceToScreenReader(`Response received from legal assistant. Confidence level: ${response.confidence ? Math.round(response.confidence * 100) : 'unknown'}%`);
+        announceToScreenReader(`Response received from legal assistant. Processing time: ${aiResponse.processingTime || 'unknown'}ms`);
 
-        // Show confidence indicator for low confidence responses
-        if (response.confidence && response.confidence < 0.7) {
-          setMessages(prev => [...prev, {
-            type: 'system',
-            content: '⚠️ This response has lower confidence. Consider seeking additional professional legal advice.',
-            timestamp: new Date().toISOString(),
-            id: `confidence-warning-${Date.now()}`
-          }]);
-        }
-
-        // Show risk warning for high-risk responses
-        if (response.riskLevel === 'HIGH') {
-          setMessages(prev => [...prev, {
-            type: 'system',
-            content: '🚨 High-risk legal area detected. This information should be verified with a qualified legal professional.',
-            timestamp: new Date().toISOString(),
-            id: `risk-warning-${Date.now()}`
-          }]);
-        }
+        // TODO: Re-implement confidence and risk warnings after fixing metadata structure
 
       } else {
         // Handle API errors gracefully
@@ -388,8 +402,8 @@ Your legal matter is important. Don't let technical issues stop you from getting
         aria-label="Chat conversation"
         aria-describedby="chat-title"
         tabIndex="0"
-      >
-        {messages.map((msg, idx) => {
+>
+        {(Array.isArray(messages) ? messages : []).map((msg, idx) => {
           const isAI = msg.type === 'ai';
           const isUser = msg.type === 'user';
           const isSystem = msg.type === 'system';
@@ -410,12 +424,24 @@ Your legal matter is important. Don't let technical issues stop you from getting
                   {isError && '⚠️'}
                 </div>
                 <div className="message-content">
-                  {msg.content.split('\n').map((line, i) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < msg.content.split('\n').length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
+                  {(() => {
+                    try {
+                      console.log('DEBUG: Message object:', msg);
+                      const safeContent = String(msg?.content || '');
+                      console.log('DEBUG: Safe content:', safeContent);
+                      if (!safeContent) return 'No content - DEBUG: msg.content was empty';
+                      const lines = safeContent.split('\n');
+                      return lines.map((line, i) => (
+                        <React.Fragment key={i}>
+                          {line}
+                          {i < lines.length - 1 && <br />}
+                        </React.Fragment>
+                      ));
+                    } catch (error) {
+                      console.error('Error rendering message content:', error, msg);
+                      return 'Error displaying message';
+                    }
+                  })()}
                   {msg.metadata && msg.metadata.confidence && (
                     <div className={`confidence-indicator confidence-${msg.metadata.confidence > 0.8 ? 'high' : msg.metadata.confidence > 0.5 ? 'medium' : 'low'}`}>
                       Confidence: {Math.round(msg.metadata.confidence * 100)}%
@@ -471,6 +497,7 @@ Your legal matter is important. Don't let technical issues stop you from getting
               aria-describedby={inputErrors.length > 0 ? 'input-errors input-help' : 'input-help'}
               rows="1"
               maxLength="5000"
+              data-testid="chat-input"
               onKeyDown={(e) => {
                 // Handle Enter for submission, Shift+Enter for new line
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -488,8 +515,9 @@ Your legal matter is important. Don't let technical issues stop you from getting
             <button
               type="submit"
               className={`send-button ${isSubmitting ? 'submitting' : ''}`}
-              disabled={!inputValue.trim() || isTyping || isSubmitting || inputErrors.length > 0}
+              disabled={isTyping || isSubmitting}
               aria-describedby="send-help"
+              data-testid="send-button"
             >
               {isSubmitting ? (
                 <span className="button-text">Sending...</span>
@@ -518,7 +546,7 @@ Your legal matter is important. Don't let technical issues stop you from getting
           {/* Input validation errors */}
           {inputErrors.length > 0 && (
             <div id="input-errors" className="input-errors" role="alert" aria-live="assertive">
-              {inputErrors.map((error, idx) => (
+              {(Array.isArray(inputErrors) ? inputErrors : []).map((error, idx) => (
                 <p key={idx} className="error-message">
                   <span className="error-icon" aria-hidden="true">⚠️</span>
                   {error}

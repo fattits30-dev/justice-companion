@@ -4,6 +4,8 @@ import Sidebar from './components/Sidebar';
 import Disclaimer from './components/Disclaimer';
 import FactConfirm from './components/FactConfirm';
 import CaseManager from './components/CaseManager';
+import DocumentManager from './components/DocumentManager';
+import TimelineManager from './components/TimelineManager';
 import './App.css';
 
 // Justice Companion Main Application
@@ -44,16 +46,17 @@ const App = () => {
       loadCases();
 
       // Listen for facts found in documents
-      window.justiceAPI.onFactFound((event, fact) => {
-        setPendingFact(fact);
-      });
+      // TODO: Implement onFactFound in preload.js
+      // window.justiceAPI.onFactFound((event, fact) => {
+      //   setPendingFact(fact);
+      // });
     }
 
     // Cleanup on unmount
     return () => {
       if (window.justiceAPI) {
-        window.justiceAPI.removeAllListeners('show-disclaimer');
-        window.justiceAPI.removeAllListeners('fact-found');
+        // TODO: Implement proper cleanup when needed
+        // window.justiceAPI.removeDisclaimerListener();
       }
     };
   }, []);
@@ -202,17 +205,40 @@ const App = () => {
             )}
 
             {activeView === 'documents' && (
-              <div className="coming-soon">
-                <h2>Document Vault</h2>
-                <p>Coming soon. Document management features are in development.</p>
-              </div>
+              <DocumentManager
+                currentCase={currentCase}
+                onDocumentUpload={async (file) => {
+                  try {
+                    if (window.justiceAPI && currentCase) {
+                      return await window.justiceAPI.saveDocument(currentCase.id, file);
+                    }
+                    return { success: false, error: 'No case selected' };
+                  } catch (error) {
+                    return { success: false, error: error.message };
+                  }
+                }}
+              />
             )}
 
             {activeView === 'timeline' && (
-              <div className="coming-soon">
-                <h2>Case Timeline</h2>
-                <p>Coming soon. Track important dates and events in your case.</p>
-              </div>
+              <TimelineManager
+                currentCase={currentCase}
+                onAddEvent={async (eventData) => {
+                  try {
+                    if (window.justiceAPI && currentCase) {
+                      // Use saveFact for timeline events with special context
+                      return await window.justiceAPI.saveFact({
+                        ...eventData,
+                        caseId: currentCase.id,
+                        context: 'timeline-event'
+                      });
+                    }
+                    return { success: false, error: 'No case selected' };
+                  } catch (error) {
+                    return { success: false, error: error.message };
+                  }
+                }}
+              />
             )}
           </div>
 
