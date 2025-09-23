@@ -30,7 +30,12 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     // Log to console for immediate visibility
     console.error('🔥 JUSTICE COMPANION CRASH DETECTED:', error, errorInfo);
-    
+    console.error('🔍 ERROR DETAILS:', {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack
+    });
+
     // Capture the error details
     this.setState({
       error,

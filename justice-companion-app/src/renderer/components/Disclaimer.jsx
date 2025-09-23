@@ -1,83 +1,71 @@
 import React from 'react';
 import './Disclaimer.css';
 
-// Disclaimer Component
-// Important legal information for users
-
 const Disclaimer = ({ onAccept }) => {
   return (
     <div className="disclaimer-overlay">
       <div className="disclaimer-container">
-        <h1>⚖️ Justice Companion</h1>
-        <h2>Important Legal Information</h2>
-        
-        <div className="disclaimer-content">
-          <p className="disclaimer-intro">
-            <strong>Welcome to Justice Companion.</strong> Before we begin,
-            it's important that you understand the nature and limitations of this service.
+        <div className="disclaimer-welcome">
+          <h1>Welcome to Justice Companion</h1>
+          <p className="subtitle">Here to help you understand your legal situation</p>
+        </div>
+
+        <div className="disclaimer-guidance">
+          <h3>📋 How We Can Help</h3>
+          <p>
+            Justice Companion helps you:
           </p>
+          <ul>
+            <li>Understand which laws apply to your situation</li>
+            <li>Identify your legal rights and options</li>
+            <li>Prepare for professional legal consultations</li>
+            <li>Organize your case information effectively</li>
+          </ul>
+        </div>
 
-          <div className="disclaimer-section">
-            <h3>Legal Information Disclaimer</h3>
-            <p>
-              Justice Companion is an informational tool designed to help you understand
-              legal concepts and organize your documentation. This service does not provide
-              legal advice or create an attorney-client relationship.
-            </p>
-            <p>
-              All information, templates, and suggestions provided are for educational
-              purposes only. For legal advice specific to your situation, please consult
-              with a qualified attorney.
-            </p>
-          </div>
+        <div className="disclaimer-recommendation">
+          <h3>💡 Our Recommendations</h3>
+          <ol>
+            <li>
+              <strong>First priority:</strong> Seek professional legal counsel for your specific situation
+            </li>
+            <li>
+              <strong>Use this app to:</strong> Better understand your position and prepare for legal consultations
+            </li>
+          </ol>
+        </div>
 
-          <div className="disclaimer-section">
-            <h3>How We Can Help</h3>
-            <ul>
-              <li>✓ Provide general information about legal rights and processes</li>
-              <li>✓ Help organize and manage your documents</li>
-              <li>✓ Offer templates and examples for common legal documents</li>
-              <li>✓ Suggest relevant resources and information</li>
-              <li>✓ Provide this service free of charge</li>
-            </ul>
+        <div className="disclaimer-important">
+          <h3>Important to Understand</h3>
+          <p>
+            Justice Companion provides legal information, not legal advice.
+            While we help you navigate the legal landscape, only a qualified solicitor
+            can provide advice specific to your case.
+          </p>
+          <p>
+            <strong>Self-Representation:</strong> You have the right to represent yourself in legal matters.
+            However, any information from this app is used at your own risk. Complex cases
+            often benefit from professional legal representation.
+          </p>
+          <p className="disclaimer-terms">
+            No attorney-client relationship is created. This app cannot be held liable for any outcomes.
+            Users assume full responsibility for how they use this information.
+          </p>
+          <div className="disclaimer-requirements-notice">
+            <p><strong>⚠️ Age Requirement:</strong> You must be 18 years or older to use this service.</p>
+            <p><strong>⚠️ Jurisdiction:</strong> This service provides UK legal information only.</p>
           </div>
+        </div>
 
-          <div className="disclaimer-section">
-            <h3>Your Responsibility</h3>
-            <p>
-              Legal matters can be complex and outcomes are never guaranteed.
-              While we strive to provide accurate and helpful information, you are
-              responsible for verifying all information and making your own decisions.
-            </p>
-            <p>
-              <strong>By proceeding, you acknowledge that:</strong> You understand this
-              service provides information only, not legal advice. You accept responsibility
-              for how you use this information.
-            </p>
-          </div>
-
-          <div className="disclaimer-dedication">
-            <p className="dedication">
-              Built for Fendi 🐕<br />
-              Who deserved better from those sworn to "do no harm"<br />
-              <br />
-              For everyone told "no" when they needed help<br />
-              For everyone priced out of justice<br />
-              For everyone who refuses to be silenced<br />
-              <br />
-              This is our answer.
-            </p>
-          </div>
+        <div className="disclaimer-privacy">
+          <span className="privacy-icon">🔒</span>
+          <span>Your information is safe - everything runs privately on your device</span>
         </div>
 
         <div className="disclaimer-actions">
           <button onClick={onAccept} className="accept-button">
-            I Understand and Accept
+            I Understand - Let's Get Started
           </button>
-          <p className="disclaimer-footer">
-            Your privacy is protected. No cookies. No tracking.<br />
-            Your information remains confidential.
-          </p>
         </div>
       </div>
     </div>
@@ -85,6 +73,3 @@ const Disclaimer = ({ onAccept }) => {
 };
 
 export default Disclaimer;
-
-// Legal disclaimer component
-// Ensures users understand the service limitations

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Justice Companion API Documentation</title>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui.css" />
+  <style>
+    html {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    body {
+      margin:0;
+      background: #fafafa;
+    }
+    .swagger-ui .topbar { display: none; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = function() {
+      const ui = SwaggerUIBundle({
+        spec: {
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Justice Companion API",
+    "version": "1.0.0",
+    "description": "Legal information and AI assistance API for Justice Companion application",
+    "contact": {
+      "name": "Justice Companion Support",
+      "url": "https://github.com/justice-companion/justice-companion",
+      "email": "support@justice-companion.org"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:11434",
+      "description": "Local Ollama Development Server"
+    },
+    {
+      "url": "https://api.justice-companion.org",
+      "description": "Production API Server"
+    }
+  ],
+  "paths": {
+    "/api/ai/chat": {
+      "post": {
+        "tags": [
+          "AI Chat"
+        ],
+        "summary": "Generate AI-powered legal information response",
+        "description": "Submit a legal query and receive AI-generated information and guidance",
+        "operationId": "generateLegalResponse",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LegalQueryRequest"
+              },
+              "examples": {
+                "landlordTenant": {
+                  "summary": "Landlord-Tenant Query",
+                  "value": {
+                    "query": "My landlord is trying to evict me without proper notice. What are my rights as a tenant?",
+                    "sessionId": "session_lt_001",
+                    "domain": "LANDLORD_TENANT",
+                    "options": {
+                      "temperature": 0.7,
+                      "maxTokens": 2048
+                    }
+                  }
+                },
+                "consumerRights": {
+                  "summary": "Consumer Rights Query",
+                  "value": {
+                    "query": "I bought a faulty product online and the company is refusing to give me a refund. What can I do?",
+                    "sessionId": "session_cr_001",
+                    "domain": "CONSUMER_RIGHTS"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfulLegalResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/api/ai/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Get system health status",
+        "description": "Check the health status of all system components",
+        "operationId": "getHealthStatus",
+        "responses": {
+          "200": {
+            "description": "System health information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "health": {
+                      "$ref": "#/components/schemas/HealthStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/ai/test-connection": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Test AI service connection",
+        "description": "Test connectivity to the AI service (Ollama)",
+        "operationId": "testConnection",
+        "responses": {
+          "200": {
+            "description": "Connection test result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "connection": {
+                      "type": "object",
+                      "properties": {
+                        "connected": {
+                          "type": "boolean"
+                        },
+                        "responseTime": {
+                          "type": "integer"
+                        },
+                        "availableModels": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/ai/analyze-document": {
+      "post": {
+        "tags": [
+          "Document Analysis"
+        ],
+        "summary": "Analyze legal document",
+        "description": "Submit a legal document for AI-powered analysis",
+        "operationId": "analyzeDocument",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentAnalysisRequest"
+              },
+              "examples": {
+                "tenancyAgreement": {
+                  "summary": "Tenancy Agreement Analysis",
+                  "value": {
+                    "documentText": "This tenancy agreement is made between...",
+                    "documentType": "tenancy_agreement",
+                    "analysisType": "key_terms"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document analysis completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentAnalysisResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/api/ai/generate-template": {
+      "post": {
+        "tags": [
+          "Template Generation"
+        ],
+        "summary": "Generate legal document template",
+        "description": "Generate a legal document template based on provided data",
+        "operationId": "generateTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateGenerationRequest"
+              },
+              "examples": {
+                "complaintLetter": {
+                  "summary": "Consumer Complaint Letter",
+                  "value": {
+                    "templateType": "complaint_letter",
+                    "formData": {
+                      "recipientName": "ABC Company Ltd",
+                      "senderName": "John Smith",
+                      "subject": "Faulty Product Refund Request",
+                      "details": "Product stopped working after 2 weeks"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Template generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateGenerationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/api/ai/clear-session": {
+      "delete": {
+        "tags": [
+          "AI Chat"
+        ],
+        "summary": "Clear session context",
+        "description": "Clear conversation context for a specific session",
+        "operationId": "clearSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session ID to clear"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session cleared successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/ai/metrics": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Get API usage metrics",
+        "description": "Retrieve system performance and usage metrics",
+        "operationId": "getMetrics",
+        "responses": {
+          "200": {
+            "description": "System metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "metrics": {
+                      "type": "object",
+                      "properties": {
+                        "totalRequests": {
+                          "type": "integer"
+                        },
+                        "successfulRequests": {
+                          "type": "integer"
+                        },
+                        "failedRequests": {
+                          "type": "integer"
+                        },
+                        "averageResponseTime": {
+                          "type": "number"
+                        },
+                        "uptime": {
+                          "type": "integer"
+                        },
+                        "rateLimiter": {
+                          "$ref": "#/components/schemas/RateLimitInfo"
+                        },
+                        "circuitBreaker": {
+                          "type": "object",
+                          "properties": {
+                            "state": {
+                              "type": "string"
+                            },
+                            "openings": {
+                              "type": "integer"
+                            },
+                            "closings": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LegalQueryRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Legal question or request for information",
+            "minLength": 10,
+            "maxLength": 5000,
+            "example": "My landlord is trying to evict me without proper notice. What are my rights?"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session identifier for conversation context",
+            "example": "session_1234567890"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "LANDLORD_TENANT",
+              "CONSUMER_RIGHTS",
+              "EMPLOYMENT_RIGHTS",
+              "FAMILY_LAW",
+              "DEBT_FINANCE",
+              "GENERAL"
+            ],
+            "description": "Legal domain for specialized handling",
+            "example": "LANDLORD_TENANT"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "Preferred AI model",
+                "example": "llama3.1:8b"
+              },
+              "temperature": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "AI response creativity (0=deterministic, 1=creative)",
+                "example": 0.7
+              },
+              "maxTokens": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 4096,
+                "description": "Maximum response length in tokens",
+                "example": 2048
+              },
+              "context": {
+                "type": "object",
+                "description": "Additional context for the query"
+              }
+            }
+          }
+        }
+      },
+      "LegalAIResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the request was successful"
+          },
+          "response": {
+            "type": "object",
+            "properties": {
+              "content": {
+                "type": "string",
+                "description": "AI-generated legal information response"
+              },
+              "domain": {
+                "type": "string",
+                "description": "Identified legal domain"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Confidence score for the response"
+              },
+              "riskLevel": {
+                "type": "string",
+                "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ],
+                "description": "Risk assessment of the response content"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Legal sources referenced in the response"
+              },
+              "disclaimer": {
+                "type": "boolean",
+                "description": "Whether legal disclaimer is included"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Response generation timestamp"
+              },
+              "model": {
+                "type": "string",
+                "description": "AI model used for generation"
+              },
+              "responseTime": {
+                "type": "integer",
+                "description": "Response generation time in milliseconds"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "safeguards": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Safety measures applied"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "User-friendly error message"
+              },
+              "code": {
+                "type": "string",
+                "description": "Error code for programmatic handling"
+              },
+              "suggestion": {
+                "type": "string",
+                "description": "Suggested action to resolve the error"
+              },
+              "canRetry": {
+                "type": "boolean",
+                "description": "Whether the request can be retried"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "HealthStatus": {
+        "type": "object",
+        "properties": {
+          "overall": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "degraded",
+              "unhealthy"
+            ],
+            "description": "Overall system health status"
+          },
+          "components": {
+            "type": "object",
+            "properties": {
+              "ai_service": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "connected": {
+                    "type": "boolean"
+                  },
+                  "lastCheck": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "availableModels": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "circuit_breaker": {
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "CLOSED",
+                      "OPEN",
+                      "HALF_OPEN"
+                    ]
+                  },
+                  "consecutiveFailures": {
+                    "type": "integer"
+                  },
+                  "lastFailureTime": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "rate_limiter": {
+                "type": "object",
+                "properties": {
+                  "activeSessions": {
+                    "type": "integer"
+                  },
+                  "requestsAllowed": {
+                    "type": "integer"
+                  },
+                  "requestsBlocked": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DocumentAnalysisRequest": {
+        "type": "object",
+        "required": [
+          "documentText",
+          "documentType"
+        ],
+        "properties": {
+          "documentText": {
+            "type": "string",
+            "description": "Text content of the document to analyze",
+            "maxLength": 50000
+          },
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "tenancy_agreement",
+              "employment_contract",
+              "consumer_contract",
+              "legal_notice",
+              "debt_letter"
+            ],
+            "description": "Type of legal document"
+          },
+          "analysisType": {
+            "type": "string",
+            "enum": [
+              "key_terms",
+              "red_flags",
+              "validity",
+              "response_options",
+              "consumer_rights"
+            ],
+            "description": "Type of analysis to perform"
+          }
+        }
+      },
+      "DocumentAnalysisResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "analysis": {
+            "type": "object",
+            "properties": {
+              "documentType": {
+                "type": "string"
+              },
+              "analysisType": {
+                "type": "string"
+              },
+              "findings": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string"
+                  },
+                  "keyPoints": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "risks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "recommendations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "confidence": {
+                "type": "number"
+              },
+              "riskLevel": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "TemplateGenerationRequest": {
+        "type": "object",
+        "required": [
+          "templateType",
+          "formData"
+        ],
+        "properties": {
+          "templateType": {
+            "type": "string",
+            "enum": [
+              "complaint_letter",
+              "landlord_communication",
+              "employment_grievance",
+              "debt_response"
+            ],
+            "description": "Type of legal template to generate"
+          },
+          "formData": {
+            "type": "object",
+            "description": "Form data to populate the template",
+            "properties": {
+              "recipientName": {
+                "type": "string"
+              },
+              "senderName": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "details": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "TemplateGenerationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "template": {
+            "type": "object",
+            "properties": {
+              "templateType": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "formData": {
+                "type": "object"
+              },
+              "generatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "disclaimer": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "RateLimitInfo": {
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "type": "boolean"
+          },
+          "waitTime": {
+            "type": "integer"
+          },
+          "limits": {
+            "type": "object",
+            "properties": {
+              "minute": {
+                "type": "object",
+                "properties": {
+                  "current": {
+                    "type": "integer"
+                  },
+                  "limit": {
+                    "type": "integer"
+                  },
+                  "remaining": {
+                    "type": "integer"
+                  },
+                  "resetTime": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "hour": {
+                "type": "object",
+                "properties": {
+                  "current": {
+                    "type": "integer"
+                  },
+                  "limit": {
+                    "type": "integer"
+                  },
+                  "remaining": {
+                    "type": "integer"
+                  },
+                  "resetTime": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "SuccessfulLegalResponse": {
+        "description": "Successful legal information response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LegalAIResponse"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "description": "Error response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "RateLimitExceeded": {
+        "description": "Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "rateLimitInfo": {
+                      "$ref": "#/components/schemas/RateLimitInfo"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "AI service temporarily unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "circuitBreakerOpen": {
+                      "type": "boolean"
+                    },
+                    "nextAttempt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "SessionId": {
+        "name": "sessionId",
+        "in": "header",
+        "description": "Session identifier for conversation context",
+        "schema": {
+          "type": "string"
+        },
+        "example": "session_1234567890"
+      },
+      "Domain": {
+        "name": "domain",
+        "in": "query",
+        "description": "Legal domain for specialized handling",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "LANDLORD_TENANT",
+            "CONSUMER_RIGHTS",
+            "EMPLOYMENT_RIGHTS",
+            "FAMILY_LAW",
+            "DEBT_FINANCE",
+            "GENERAL"
+          ]
+        }
+      }
+    },
+    "securitySchemes": {}
+  },
+  "tags": [
+    {
+      "name": "AI Chat",
+      "description": "AI-powered legal information and chat services"
+    },
+    {
+      "name": "Health",
+      "description": "System health and monitoring endpoints"
+    },
+    {
+      "name": "Document Analysis",
+      "description": "Legal document analysis and review services"
+    },
+    {
+      "name": "Template Generation",
+      "description": "Legal document template generation services"
+    },
+    {
+      "name": "Rate Limiting",
+      "description": "API rate limiting and usage management"
+    }
+  ]
+},
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+      });
+    };
+  </script>
+</body>
+</html>

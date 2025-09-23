@@ -12,8 +12,8 @@ class LegalAIService extends EventEmitter {
     // Initialize Ollama client
     this.ollamaClient = new OllamaClient({
       baseURL: config.ollamaURL || 'http://localhost:11434',
-      model: config.model || 'llama3.2',
-      timeout: config.timeout || 30000,
+      model: config.model || 'llama2',
+      timeout: config.timeout || 120000, // Increased to 2 minutes for AI processing
       maxRetries: 3,
       failureThreshold: 5,
       recoveryTimeout: 60000,
@@ -544,7 +544,7 @@ ${content}
     const queryLower = query.toLowerCase();
 
     for (const [templateKey, template] of this.templateCache) {
-      const keywords = templateKey.split('_');
+      const keywords = String(templateKey || '').split('_');
       if (keywords.every(keyword => queryLower.includes(keyword))) {
         return {
           content: template.template,

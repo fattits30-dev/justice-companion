@@ -1,21 +1,4 @@
-/* Justice Companion Disclaimer Styles */
-/* Professional Legal Assistance - Your Journey Begins Here */
-
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f7f7f8;
-  --bg-tertiary: #ececf1;
-  --accent-green: #10a37f;
-  --accent-green-hover: #0d8f6f;
-  --text-primary: #2d333a;
-  --text-secondary: #6e767d;
-  --text-muted: #8e959c;
-  --border-light: #e5e5e5;
-  --border-medium: #d9d9e3;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
+/* Supportive Legal Disclaimer - Helping People in Difficult Situations */
 
 .disclaimer-overlay {
   position: fixed;
@@ -23,337 +6,303 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--bg-primary);
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(45, 85, 120, 0.95) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  padding: 2rem;
-  animation: fadeIn 0.5s ease-in;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+  padding: 1rem;
 }
 
 .disclaimer-container {
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 2rem;
+  max-width: 720px;
+  width: 95%;
+  background: linear-gradient(145deg, #1e293b 0%, #1a202e 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  max-height: 95vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-  animation: slideInUp 0.6s ease-out;
 }
 
-.disclaimer-container h1 {
-  color: var(--text-primary);
+/* Welcome Section - Friendly First Impression */
+.disclaimer-welcome {
   text-align: center;
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  padding: 1.5rem 2rem 1rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* Requirements Badges - Highly Visible */
+.disclaimer-requirements {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.requirement-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.disclaimer-container h2 {
-  color: var(--text-secondary);
-  text-align: center;
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
+.age-badge {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ff6b6b;
+  border: 2px solid rgba(239, 68, 68, 0.4);
+}
+
+.jurisdiction-badge {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  border: 2px solid rgba(251, 191, 36, 0.4);
+}
+
+.disclaimer-welcome h1 {
+  font-size: 1.75rem;
+  color: #f1f5f9;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin: 0;
   font-weight: 400;
-  letter-spacing: 0.5px;
 }
 
-.disclaimer-content {
-  color: var(--text-primary);
-  line-height: 1.7;
-  margin-bottom: 2rem;
+/* How We Help Section */
+.disclaimer-guidance {
+  padding: 1.25rem 2rem;
+  background: rgba(34, 197, 94, 0.03);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
-.disclaimer-intro {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  border-left: 4px solid var(--accent-green);
+.disclaimer-guidance h3 {
+  color: #86efac;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.disclaimer-intro strong {
-  color: var(--accent-green);
+.disclaimer-guidance p {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.disclaimer-guidance ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.disclaimer-guidance li {
+  color: #e2e8f0;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+  padding-left: 1.75rem;
+  position: relative;
+  line-height: 1.4;
+}
+
+.disclaimer-guidance li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #86efac;
   font-weight: bold;
 }
 
-.disclaimer-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  border: 1px solid var(--border-light);
+/* Recommendations Section */
+.disclaimer-recommendation {
+  padding: 1.25rem 2rem;
+  background: rgba(251, 191, 36, 0.03);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
-.disclaimer-section h3 {
-  color: var(--text-primary);
-  font-size: 1.2rem;
+.disclaimer-recommendation h3 {
+  color: #fcd34d;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: 0.5rem;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.disclaimer-section p {
-  margin-bottom: 1rem;
-  color: var(--text-secondary);
-}
-
-.disclaimer-section ul {
+.disclaimer-recommendation ol {
   list-style: none;
   padding: 0;
-  margin: 1rem 0;
-}
-
-.disclaimer-section li {
-  padding: 0.75rem 0;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-light);
-  transition: all 0.3s ease;
-}
-
-.disclaimer-section li:hover {
-  background: var(--bg-secondary);
-  border-left: 3px solid var(--accent-green);
-  padding-left: 1rem;
-}
-
-.disclaimer-section li:last-child {
-  border-bottom: none;
-}
-
-.disclaimer-dedication {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-medium);
-  border-radius: 15px;
-  padding: 2rem;
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.dedication {
-  color: var(--text-primary);
-  font-style: italic;
-  line-height: 1.8;
-  font-size: 1rem;
   margin: 0;
+  counter-reset: item;
 }
 
-.disclaimer-actions {
+.disclaimer-recommendation li {
+  color: #e2e8f0;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  counter-increment: item;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.disclaimer-recommendation li:before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  top: 0.75rem;
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  margin: 2rem 0;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.disclaimer-recommendation strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* Important Section - Softer Approach */
+.disclaimer-important {
+  padding: 1.25rem 2rem;
+  background: rgba(148, 163, 184, 0.05);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.disclaimer-important h3 {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.disclaimer-important p {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 0 0.75rem 0;
+}
+
+.disclaimer-terms {
+  font-size: 0.8rem !important;
+  color: #94a3b8 !important;
+  opacity: 0.9;
+  margin-top: 0.5rem !important;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* Requirements Notice - Clear and Prominent */
+.disclaimer-requirements-notice {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(148, 163, 184, 0.1);
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+}
+
+.disclaimer-requirements-notice p {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.disclaimer-requirements-notice p:first-child {
+  margin-top: 0;
+}
+
+.disclaimer-requirements-notice p:last-child {
+  margin-bottom: 0;
+}
+
+.disclaimer-requirements-notice strong {
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+/* Privacy Badge */
+.disclaimer-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: rgba(34, 197, 94, 0.05);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  color: #86efac;
+  font-size: 0.9rem;
+}
+
+.privacy-icon {
+  font-size: 1.1rem;
+}
+
+/* Actions Section */
+.disclaimer-actions {
+  padding: 1.5rem 2rem;
+  background: rgba(30, 41, 59, 0.5);
 }
 
 .accept-button {
-  background: var(--accent-green);
-  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  color: #fff;
   border: none;
-  padding: 0.875rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-radius: 8px;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  overflow: hidden;
-}
-
-.accept-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
+  transition: all 0.2s;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.accept-button:hover::before {
-  left: 100%;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
 }
 
 .accept-button:hover {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-  background: var(--accent-green-hover);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .accept-button:active {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
 }
 
-.disclaimer-footer {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* Custom Scrollbar for Disclaimer */
+/* Scrollbar styling */
 .disclaimer-container::-webkit-scrollbar {
   width: 8px;
 }
 
 .disclaimer-container::-webkit-scrollbar-track {
-  background: var(--bg-tertiary);
-  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.5);
 }
 
 .disclaimer-container::-webkit-scrollbar-thumb {
-  background: var(--accent-green);
+  background: rgba(148, 163, 184, 0.3);
   border-radius: 4px;
 }
 
 .disclaimer-container::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-green-hover);
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .disclaimer-overlay {
-    padding: 1rem;
-  }
-
-  .disclaimer-container {
-    padding: 1.5rem;
-    max-height: 95vh;
-  }
-
-  .disclaimer-container h1 {
-    font-size: 2rem;
-  }
-
-  .disclaimer-section {
-    padding: 1rem;
-  }
-
-  .accept-button {
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    letter-spacing: 1px;
-  }
-
-  .disclaimer-dedication {
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .disclaimer-container h1 {
-    font-size: 1.5rem;
-    letter-spacing: 1px;
-  }
-
-  .disclaimer-container h2 {
-    font-size: 1rem;
-  }
-
-  .disclaimer-intro,
-  .disclaimer-section {
-    padding: 0.75rem;
-  }
-
-  .accept-button {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-/* Special Effects */
-.disclaimer-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(16, 163, 127, 0.03) 50%, transparent 70%);
-  pointer-events: none;
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0%, 100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-}
-
-/* Focus States for Accessibility */
-.accept-button:focus {
-  outline: 2px solid var(--accent-green);
-  outline-offset: 2px;
-}
-
-/* High Contrast Mode Support */
-@media (prefers-contrast: high) {
-  .disclaimer-container {
-    border-width: 2px;
-    background: var(--bg-primary);
-  }
-
-  .disclaimer-section {
-    background: var(--bg-secondary);
-    border-width: 2px;
-  }
-
-  .accept-button {
-    border: 1px solid var(--text-primary);
-  }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  .disclaimer-overlay,
-  .disclaimer-container,
-  .accept-button,
-  .disclaimer-section li {
-    animation: none;
-    transition: none;
-  }
-
-  .accept-button:hover {
-    transform: none;
-  }
-
-  .disclaimer-container::before {
-    display: none;
-  }
+  background: rgba(148, 163, 184, 0.5);
 }

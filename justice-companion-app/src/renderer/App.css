@@ -2,40 +2,68 @@
 /* Clean, minimal, professional design */
 
 :root {
-  /* Professional Legal Tech Color Palette - Enhanced Accessibility */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
-  --bg-accent: #f0f7ff;
-  --text-primary: #1a202c;
-  --text-secondary: #4a5568;
-  --text-tertiary: #718096;
-  --text-muted: #a0aec0;
-  --border-light: #e2e8f0;
-  --border-medium: #cbd5e0;
-  --border-strong: #a0aec0;
-  --accent-green: #0f9488; /* Teal for legal authority */
-  --accent-green-hover: #0d7977;
-  --accent-blue: #2563eb;
-  --accent-gold: #d69e2e; /* For critical/urgent items */
-  --accent-red: #e53e3e; /* For warnings/errors */
-  --hover-bg: #f7fafc;
-  --success-bg: #f0fff4;
-  --warning-bg: #fffaf0;
-  --error-bg: #fed7d7;
+  /* Calm Legal Tech Palette - Supportive & Professional (matching disclaimer theme) */
+  --bg-primary: linear-gradient(145deg, #1e293b 0%, #1a202e 100%);
+  --bg-secondary: linear-gradient(135deg, #1a202e 0%, #0f172a 100%);
+  --bg-tertiary: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  --bg-accent: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%);
+  --bg-glass: rgba(30, 41, 59, 0.25);
+  --bg-glass-strong: rgba(30, 41, 59, 0.4);
+  --bg-overlay: rgba(15, 23, 42, 0.8);
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #1e293b;
+  --border-light: rgba(148, 163, 184, 0.1);
+  --border-medium: rgba(148, 163, 184, 0.15);
+  --border-strong: rgba(148, 163, 184, 0.3);
+  --border-glass: rgba(148, 163, 184, 0.15);
+  --accent-primary: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  --accent-primary-hover: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  --accent-secondary: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --accent-tertiary: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  --accent-gold: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+  --accent-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --accent-green: linear-gradient(135deg, #86efac 0%, #34d399 100%);
+  --hover-bg: rgba(30, 41, 59, 0.5);
+  --hover-glass: rgba(30, 41, 59, 0.6);
+  --success-bg: rgba(34, 197, 94, 0.03);
+  --warning-bg: rgba(251, 191, 36, 0.03);
+  --error-bg: rgba(239, 68, 68, 0.03);
 
   /* Layout Constants */
-  --sidebar-width: 280px; /* Wider for legal content */
-  --sidebar-collapsed: 64px;
+  --sidebar-width: 250px; /* Optimized width for legal content */
+  --sidebar-collapsed: 60px;
   --header-height: 64px;
   --content-padding: 24px;
 
-  /* Enhanced Shadows for Professional Look */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  /* Premium Layered Shadow System - Glass Morphism Depth */
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-sm:
+    0 1px 3px 0 rgba(15, 23, 42, 0.08),
+    0 1px 2px 0 rgba(15, 23, 42, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --shadow-md:
+    0 4px 6px -1px rgba(15, 23, 42, 0.08),
+    0 2px 4px -1px rgba(15, 23, 42, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  --shadow-lg:
+    0 10px 15px -3px rgba(15, 23, 42, 0.1),
+    0 4px 6px -2px rgba(15, 23, 42, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  --shadow-xl:
+    0 20px 25px -5px rgba(15, 23, 42, 0.12),
+    0 10px 10px -5px rgba(15, 23, 42, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  --shadow-glass:
+    0 8px 32px 0 rgba(15, 23, 42, 0.12),
+    0 2px 16px 0 rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  --shadow-floating:
+    0 25px 50px -12px rgba(15, 23, 42, 0.25),
+    0 12px 20px -8px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 
   /* Professional Border Radius */
   --radius-xs: 2px;
@@ -45,24 +73,47 @@
   --radius-xl: 12px;
   --radius-2xl: 16px;
 
-  /* Smooth Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Spring Physics Transitions - Premium Feel */
+  --transition-micro: 120ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-normal: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-slow: 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-glass: 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-bounce: 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-  /* Professional Typography */
+  /* Premium Typography System */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-legal: 'Charter', 'Georgia', 'Times New Roman', serif; /* For legal documents */
+  --font-legal: 'Charter', 'Georgia', 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, 'Liberation Mono', Menlo, monospace;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  /* Typography Scale */
-  --text-xs: 0.75rem;    /* 12px */
-  --text-sm: 0.875rem;   /* 14px */
-  --text-base: 1rem;     /* 16px */
-  --text-lg: 1.125rem;   /* 18px */
-  --text-xl: 1.25rem;    /* 20px */
-  --text-2xl: 1.5rem;    /* 24px */
-  --text-3xl: 1.875rem;  /* 30px */
+  /* Letter Spacing for Premium Feel */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+
+  /* Premium Typography Scale */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+
+  /* Font Weights */
+  --font-thin: 100;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
 
   /* Line Heights */
   --leading-tight: 1.25;
@@ -79,19 +130,61 @@
 
 body {
   font-family: var(--font-sans);
+  font-weight: var(--font-normal);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--letter-spacing-normal);
   color: var(--text-primary);
-  background: var(--bg-secondary);
+  background:
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 75% 75%, rgba(134, 239, 172, 0.05) 0%, transparent 25%),
+    linear-gradient(135deg, #1e293b 0%, #1a202e 100%);
+  background-attachment: fixed;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
+  /* Premium backdrop blur support */
+  backdrop-filter: blur(0px);
+  transition: backdrop-filter var(--transition-slow);
+  /* Enhanced text rendering */
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'ss01' 1;
+  font-optical-sizing: auto;
 }
 
 /* Main app container - 3 column layout */
 .app-container {
   display: flex;
   height: 100vh;
-  background: var(--bg-secondary);
+  background: transparent;
   position: relative;
+  overflow: hidden;
+  /* Premium glass container */
+  isolation: isolate;
+}
+
+.app-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(134, 239, 172, 0.03) 0%, transparent 30%),
+    radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.02) 0%, transparent 25%);
+  pointer-events: none;
+  z-index: -1;
+  animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 /* Main content area - Center column */
@@ -99,15 +192,33 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: var(--bg-secondary);
+  background: transparent;
+  backdrop-filter: blur(8px);
   min-width: 0;
   position: relative;
-  transition: margin-left var(--transition-normal) ease;
+  transition:
+    margin-left var(--transition-slow),
+    width var(--transition-slow),
+    backdrop-filter var(--transition-glass),
+    box-shadow var(--transition-normal);
   margin-left: 0;
+  border-radius: 0;
+  overflow: hidden;
+  /* Glass morphism content area */
+  background:
+    linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(30, 41, 59, 0.2) 100%);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-glass);
+  /* Ensure content uses full available space */
+  padding: var(--content-padding);
 }
 
 .main-content.sidebar-open {
   margin-left: var(--sidebar-width);
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: var(--sidebar-collapsed);
 }
 
 /* Hamburger menu button - Enhanced positioning */
@@ -115,45 +226,97 @@ body {
   position: fixed;
   top: 1rem;
   left: 1rem;
-  z-index: 300; /* Increased z-index to ensure visibility */
-  background: var(--bg-primary);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-md);
-  width: 44px; /* Slightly larger for better touch targets */
-  height: 44px;
+  z-index: 300;
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-xl);
+  width: 48px;
+  height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-md); /* Enhanced shadow for better visibility */
-  backdrop-filter: blur(8px); /* Modern glass effect */
-  border: 2px solid var(--border-light);
+  transition: all var(--transition-bounce);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(148, 163, 184, 0.15) inset;
+  /* Premium glass button with hover glow */
+  position: relative;
+  overflow: hidden;
+}
+
+.hamburger-menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.2) 0%, rgba(148, 163, 184, 0.1) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-micro);
+}
+
+.hamburger-menu:hover::before {
+  opacity: 1;
 }
 
 .hamburger-menu:hover {
-  background: var(--hover-bg);
-  border-color: var(--accent-green);
+  background: var(--hover-glass);
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow:
+    var(--shadow-floating),
+    0 0 20px rgba(59, 130, 246, 0.2);
+  /* Micro-interaction: subtle pulse */
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.hamburger-menu:active {
+  transform: translateY(0) scale(0.95);
+  transition: all var(--transition-micro);
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow:
+      var(--shadow-floating),
+      0 0 20px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow:
+      var(--shadow-floating),
+      0 0 28px rgba(59, 130, 246, 0.3),
+      0 0 40px rgba(59, 130, 246, 0.1);
+  }
 }
 
 .hamburger-line {
   width: 20px;
   height: 2px;
-  background: var(--text-primary);
-  border-radius: 1px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+  border-radius: 2px;
   transition: all var(--transition-fast);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
 }
 
 .hamburger-menu:hover .hamburger-line {
-  background: var(--accent-green);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.2),
+    0 0 8px rgba(59, 130, 246, 0.3);
 }
 
 /* Move hamburger when sidebar is open - Smooth transition */
 .hamburger-menu.sidebar-open {
   left: calc(var(--sidebar-width) + 1rem);
-  background: rgba(255, 255, 255, 0.95); /* Translucent when over content */
+  background: rgba(30, 41, 59, 0.95); /* Translucent when over content */
+}
+
+.hamburger-menu.sidebar-collapsed {
+  left: calc(var(--sidebar-collapsed) + 1rem);
+  background: rgba(30, 41, 59, 0.95);
 }
 
 /* Enhanced hamburger animation */
@@ -194,10 +357,109 @@ body {
   max-width: 400px;
 }
 
-/* Responsive design */
+/* Enhanced responsive design for web deployment */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+    --sidebar-collapsed: 60px;
+    --content-padding: 16px;
+    /* Responsive typography */
+    --text-base: 0.95rem;
+    --text-lg: 1.0625rem;
+    --text-xl: 1.1875rem;
+  }
+
+  .hamburger-menu {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Better spacing for tablet sizes */
+  .main-content {
+    padding: var(--content-padding);
+  }
+}
+
 @media (max-width: 768px) {
-  .main-content.sidebar-open {
-    margin-left: 0;
+  :root {
+    --sidebar-width: 280px; /* Full mobile width */
+    --content-padding: 12px;
+  }
+
+  .main-content.sidebar-open,
+  .main-content.sidebar-collapsed {
+    margin-left: 0; /* Overlay mode on mobile */
+  }
+
+  .hamburger-menu.sidebar-open,
+  .hamburger-menu.sidebar-collapsed {
+    left: 1rem; /* Keep hamburger in place on mobile */
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(8px);
+  }
+
+  .app-container {
+    flex-direction: column;
+  }
+
+  /* Ensure touch targets are adequate */
+  button, .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --content-padding: 8px;
+    --text-base: 0.9rem; /* Slightly smaller text on very small screens */
+  }
+
+  .loading-api {
+    padding: 1rem;
+  }
+
+  .loading-api h2 {
+    font-size: 1.5rem;
+  }
+
+  .loading-api p {
+    font-size: 1rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hamburger-line {
+    transform: translateZ(0); /* Force hardware acceleration */
+  }
+}
+
+/* Print styles for legal documents */
+@media print {
+  .hamburger-menu,
+  .sidebar,
+  .disclaimer-bar {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    background: white !important;
+  }
+
+  * {
+    color: black !important;
+    background: white !important;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -233,13 +495,13 @@ html {
 
 /* Selection color */
 ::selection {
-  background: rgba(16, 163, 127, 0.2);
+  background: rgba(59, 130, 246, 0.3);
   color: var(--text-primary);
 }
 
 /* Focus visible for accessibility */
 :focus-visible {
-  outline: 2px solid var(--accent-green);
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -260,7 +522,7 @@ html {
 .loading-api h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: var(--accent-green);
+  color: var(--text-primary);
 }
 
 .loading-api p {
@@ -269,13 +531,20 @@ html {
   color: var(--text-secondary);
 }
 
+.loading-detail {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem !important;
+  font-style: italic;
+}
+
 .loading-spinner {
   display: inline-block;
   width: 40px;
   height: 40px;
   border: 3px solid var(--border-light);
   border-radius: 50%;
-  border-top-color: var(--accent-green);
+  border-top-color: #3b82f6;
   animation: spin 1s ease-in-out infinite;
 }
 

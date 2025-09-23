@@ -1,0 +1,395 @@
+name: Install Guide Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      test_scenario:
+        description: 'Test scenario to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - npm-fresh-install
+        - npm-reinstall
+        - npm-upgrade
+      platforms:
+        description: 'Platforms to test on (JSON array)'
+        required: true
+        default: '["ubuntu-latest", "macos-latest"]'
+        type: string
+
+jobs:
+  parse-documentation:
+    name: Parse Install Guide Documentation
+    runs-on: ubuntu-latest
+    outputs:
+      test-matrix: ${{ steps.parse.outputs.test-matrix }}
+      has-changes: ${{ steps.changes.outputs.docs }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check for documentation changes
+      uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          docs:
+            - 'docs/manual-uninstall-install-guide.md'
+          tests:
+            - 'tests/**'
+          commands:
+            - 'slash-commands/**'
+            - 'lib/**'
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Parse documentation and generate test matrix
+      id: parse
+      run: |
+        cd tests
+        node install-guide-parser.js ../docs/manual-uninstall-install-guide.md --json > test-suite.json
+        
+        # Generate dynamic test matrix based on documentation
+        echo "test-matrix<<EOF" >> $GITHUB_OUTPUT
+        cat test-suite.json | jq -c '.testMatrix' >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        # Output summary
+        echo "📋 Generated test matrix from documentation"
+        cat test-suite.json | jq '.metadata'
+
+    - name: Upload test suite configuration
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-suite-config
+        path: tests/test-suite.json
+        retention-days: 7
+
+  install-guide-tests:
+    name: Test Install Guide - ${{ matrix.scenario }} on ${{ matrix.platform }}
+    needs: parse-documentation
+    # Run tests on every push since we want comprehensive testing
+    if: always()
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(inputs.platforms || '["ubuntu-latest", "macos-latest"]') }}
+        node-version: ['18.x', '20.x']
+        scenario: 
+          - npm-fresh-install
+          - npm-reinstall  
+        include:
+          - platform: ubuntu-latest
+            node-version: '20.x'
+            scenario: npm-upgrade
+        exclude:
+          # Skip some combinations to reduce CI load
+          - platform: macos-latest
+            node-version: '18.x'
+            scenario: npm-reinstall
+
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 30
+
+    env:
+      TEST_SCENARIO: ${{ matrix.scenario }}
+      NODE_ENV: test
+      CI: true
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Download test suite configuration
+      uses: actions/download-artifact@v4
+      with:
+        name: test-suite-config
+        path: tests/
+
+    - name: Install test dependencies
+      run: |
+        # Install compatible npm version based on Node.js version
+        if [[ "${{ matrix.node-version }}" == "18.x" ]]; then
+          npm install -g npm@10
+        else
+          npm install -g npm@latest
+        fi
+        
+        # Install required Claude Code CLI (tests expect this to be available)
+        npm install -g @anthropic-ai/claude-code
+        
+        # Install Claude Dev Toolkit (tests expect claude-commands to be available)
+        npm install -g @paulduvall/claude-dev-toolkit
+        
+        cd tests && npm install
+
+    - name: Setup test environment
+      run: |
+        # Create clean test environment
+        export TEST_HOME="/tmp/claude-test-${{ matrix.scenario }}-$$"
+        mkdir -p "$TEST_HOME"
+        
+        # Override HOME for isolation
+        echo "TEST_HOME=$TEST_HOME" >> $GITHUB_ENV
+        echo "Original HOME: $HOME"
+        echo "Test HOME: $TEST_HOME"
+        
+        # Store original npm global prefix before changing HOME
+        ORIGINAL_NPM_PREFIX=$(npm config get prefix)
+        echo "Original npm prefix: $ORIGINAL_NPM_PREFIX"
+        
+        # Verify required CLI tools are available before proceeding
+        echo "Checking required CLI tools..."
+        which claude || echo "⚠️ claude not found in PATH"
+        which claude-commands || echo "⚠️ claude-commands not found in PATH"
+        claude --version || echo "⚠️ claude --version failed"  
+        claude-commands --version || echo "⚠️ claude-commands --version failed"
+        
+        # Add original npm global bin to PATH for all subsequent steps
+        echo "$ORIGINAL_NPM_PREFIX/bin" >> $GITHUB_PATH
+        
+        # Initialize clean npm environment for test isolation
+        export HOME="$TEST_HOME"
+        npm config set prefix "$TEST_HOME/.npm-global"
+        echo "$TEST_HOME/.npm-global/bin" >> $GITHUB_PATH
+
+    - name: Run pre-test setup for ${{ matrix.scenario }}
+      run: |
+        cd tests
+        node install-guide-tester.js --scenario=${{ matrix.scenario }} --phase=pre-setup
+      env:
+        HOME: ${{ env.TEST_HOME }}
+
+    - name: Execute install guide test steps
+      run: |
+        cd tests
+        node install-guide-tester.js --scenario=${{ matrix.scenario }} --phase=execute
+      env:
+        HOME: ${{ env.TEST_HOME }}
+
+    - name: Validate installation results
+      run: |
+        cd tests
+        node install-guide-tester.js --scenario=${{ matrix.scenario }} --phase=validate
+      env:
+        HOME: ${{ env.TEST_HOME }}
+
+    - name: Generate test report
+      if: always()
+      run: |
+        cd tests
+        node install-guide-tester.js --scenario=${{ matrix.scenario }} --phase=report
+      env:
+        HOME: ${{ env.TEST_HOME }}
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.platform }}-${{ matrix.node-version }}-${{ matrix.scenario }}
+        path: |
+          tests/test-results/
+          tests/logs/
+        retention-days: 7
+
+    - name: Cleanup test environment
+      if: always()
+      run: |
+        # Cleanup test environment
+        if [ -d "${{ env.TEST_HOME }}" ]; then
+          rm -rf "${{ env.TEST_HOME }}"
+        fi
+
+
+  automated-testing:
+    name: Automated Testing Suite
+    runs-on: ubuntu-latest
+    # Run automated tests on every push
+    if: always()
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install test dependencies
+      run: |
+        cd tests && npm install
+
+    - name: Discover and run all test files
+      run: |
+        cd tests
+        chmod +x run-all-tests.sh
+        ./run-all-tests.sh
+
+    - name: Test customization guide parser
+      run: |
+        cd tests
+        node customization-guide-parser.js ../docs/publish/and-customizing-claude-code.md
+        echo "✅ Customization guide parser test passed"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: automated-test-results
+        path: tests/test-results/
+        retention-days: 30
+
+  security-validation:
+    name: Security Validation
+    runs-on: ubuntu-latest
+    needs: parse-documentation
+    # Run security validation on every push
+    if: always()
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Validate security of parsed commands
+      run: |
+        cd tests
+        node security-validator.js ../docs/manual-uninstall-install-guide.md
+
+    - name: Upload security report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-validation-report
+        path: tests/test-results/
+        retention-days: 30
+
+  customization-guide-tests:
+    name: Customization Guide Testing
+    runs-on: ubuntu-latest
+    needs: parse-documentation
+    # Run customization guide tests on every push
+    if: always()
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ['customization-setup', 'advanced-workflow']
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install test dependencies
+      run: |
+        # Install required CLI tools
+        npm install -g @anthropic-ai/claude-code
+        npm install -g @paulduvall/claude-dev-toolkit
+        
+        cd tests && npm install
+
+    - name: Setup customization test environment
+      run: |
+        # Create clean test environment
+        export TEST_HOME="/tmp/claude-customization-test-${{ matrix.scenario }}-$$"
+        mkdir -p "$TEST_HOME"
+        
+        echo "TEST_HOME=$TEST_HOME" >> $GITHUB_ENV
+        echo "Test HOME: $TEST_HOME"
+        
+        # Store original npm global prefix
+        ORIGINAL_NPM_PREFIX=$(npm config get prefix)
+        echo "$ORIGINAL_NPM_PREFIX/bin" >> $GITHUB_PATH
+        
+        # Initialize clean npm environment
+        export HOME="$TEST_HOME"
+        npm config set prefix "$TEST_HOME/.npm-global"
+        echo "$TEST_HOME/.npm-global/bin" >> $GITHUB_PATH
+
+    - name: Parse customization guide
+      run: |
+        cd tests
+        node customization-guide-parser.js ../docs/publish/and-customizing-claude-code.md --json > customization-test-suite.json
+        
+        echo "📋 Generated customization test suite"
+        cat customization-test-suite.json | jq '.metadata'
+
+    - name: Run pre-setup for ${{ matrix.scenario }}
+      run: |
+        cd tests
+        node customization-guide-tester.js --scenario=${{ matrix.scenario }} --phase=pre-setup
+      env:
+        HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+        TEST_HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+
+    - name: Execute customization guide steps
+      run: |
+        cd tests
+        node customization-guide-tester.js --scenario=${{ matrix.scenario }} --phase=execute
+      env:
+        HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+        TEST_HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+
+    - name: Validate customization results
+      run: |
+        cd tests
+        node customization-guide-tester.js --scenario=${{ matrix.scenario }} --phase=validate
+      env:
+        HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+        TEST_HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+
+    - name: Generate customization test report
+      if: always()
+      run: |
+        cd tests
+        node customization-guide-tester.js --scenario=${{ matrix.scenario }} --phase=report
+      env:
+        HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+        TEST_HOME: /tmp/claude-customization-test-${{ matrix.scenario }}
+
+    - name: Upload customization test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: customization-test-results-${{ matrix.scenario }}
+        path: |
+          tests/test-results/customization-*
+          tests/customization-test-suite.json
+        retention-days: 7
+
+    - name: Cleanup customization test environment
+      if: always()
+      run: |
+        TEST_DIR="/tmp/claude-customization-test-${{ matrix.scenario }}"
+        if [ -d "$TEST_DIR" ]; then
+          rm -rf "$TEST_DIR"
+          echo "✅ Cleaned up test directory: $TEST_DIR"
+        fi

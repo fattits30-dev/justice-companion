@@ -9,7 +9,7 @@ class APIIntegration extends EventEmitter {
     this.circuitBreaker = {
       failures: 0,
       threshold: 5,
-      timeout: 30000,
+      timeout: 120000,
       state: 'closed',
       nextAttempt: null,
       lastStateChange: Date.now()
@@ -140,7 +140,7 @@ class APIIntegration extends EventEmitter {
         headers: {
           'Content-Type': 'application/json'
         },
-        timeout: 30000
+        timeout: 120000
       };
 
       const req = http.request(options, (res) => {
@@ -370,7 +370,7 @@ Remember: This information is for educational purposes. Users should consult qua
   }
 
   getBasicDocumentAnalysis(text, type) {
-    const wordCount = text.split(/\s+/).length;
+    const wordCount = String(text || '').split(/\s+/).length;
     const hasLegalTerms = /agreement|contract|party|liability|damages|court/i.test(text);
 
     return {
@@ -426,7 +426,7 @@ Remember: This information is for educational purposes. Users should consult qua
       this.circuitBreaker = {
         failures: 0,
         threshold: 5,
-        timeout: 30000,
+        timeout: 120000,
         state: 'closed',
         nextAttempt: null,
         lastStateChange: Date.now()

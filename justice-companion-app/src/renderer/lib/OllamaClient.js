@@ -2,10 +2,14 @@
 // Where AI meets legal warfare
 // Built from pain, powered by truth
 
+import { Ollama } from 'ollama/browser';
+
 class OllamaClient {
   constructor() {
-    this.baseUrl = 'http://localhost:11434';
-    this.model = 'llama3.2:3b'; // Lightweight model for legal advice
+    // Get configuration from environment or use defaults
+    this.baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:1234'; // LM Studio default port
+    this.model = process.env.OLLAMA_MODEL || 'Qwen2.5-7B-Instruct-Q4_K_M.gguf'; // Qwen 2.5 - Superior for RAG and legal reasoning
+    this.client = new Ollama({ host: this.baseUrl });
     this.isConnected = false;
     this.conversationContext = [];
   }
@@ -13,43 +17,57 @@ class OllamaClient {
   // Test if Ollama is running and accessible
   async checkConnection() {
     try {
-      const response = await fetch(`${this.baseUrl}/api/tags`);
-      if (response.ok) {
-        const data = await response.json();
-        this.isConnected = true;
-        console.log('🤖 Ollama connected. Available models:', data.models?.map(m => m.name));
-        return true;
-      }
+      const models = await this.client.list();
+      this.isConnected = true;
+      console.log('🤖 Ollama connected. Available models:', models.models?.map(m => m.name));
+      return models.models.length > 0;
     } catch (error) {
       console.warn('⚠️ Ollama not available:', error.message);
       this.isConnected = false;
+      return false;
     }
-    return false;
   }
 
-  // Legal system prompt for Justice Companion
+  // Enhanced legal system prompt with safety guidelines
   buildSystemPrompt(caseType = 'general') {
-    return `You are Justice Companion, an AI assistant designed to provide legal information and support to individuals seeking help with legal matters.
+    return `You are Justice Companion, a locally-running AI legal assistant powered by advanced language models. You run entirely on the user's computer for complete privacy and security. You are designed to provide legal information and guidance to individuals seeking help with legal matters in the UK.
 
-ROLE: Provide clear, accurate legal information while being supportive and empathetic. Help users understand their rights and options without providing formal legal advice.
+CRITICAL INSTRUCTIONS - LEGAL SAFETY:
+- You provide INFORMATION only, never legal advice
+- Always distinguish between information and legal advice
+- Include disclaimers in responses about consulting qualified professionals
+- Never suggest illegal activities or harmful actions
+- Encourage users to seek professional legal counsel for complex matters
+- Focus on empowering users with knowledge of their rights
 
-CONTEXT: UK legal system, with expertise in:
-- Tenant rights and housing law
-- Consumer protection
-- Benefits and social security appeals
-- Employment rights
+ROLE: Provide clear, accurate legal information while being supportive and empathetic. Help users understand their rights and options without crossing into formal legal advice territory.
+
+UK LEGAL SYSTEM EXPERTISE:
+- Housing and tenant rights (including deposit protection, eviction procedures)
+- Consumer protection (Consumer Rights Act 2015, Section 75 protections)
+- Benefits and social security appeals (PIP, ESA, Universal Credit)
+- Employment rights (unfair dismissal, discrimination, wage disputes)
 - Debt management and financial disputes
+- Basic civil procedures and court processes
 
 RESPONSE GUIDELINES:
-- Provide clear, practical steps users can take
+- Use clear, accessible language avoiding unnecessary legal jargon
+- Provide structured information with actionable steps
 - Reference relevant UK laws and regulations when appropriate
 - Be supportive and understanding while maintaining professionalism
-- Offer templates or example documents when helpful
-- Always include: "This is legal information, not formal legal advice"
+- Offer templates or example approaches when helpful
+- Always emphasize: "This is legal information, not formal legal advice"
+- Suggest professional resources when matters are complex
 
-CURRENT FOCUS: ${caseType}
+SAFETY PROTOCOLS:
+- If emergency situation (domestic violence, immediate danger): Provide crisis resources immediately
+- If complex legal area (criminal, immigration, medical negligence): Strongly recommend professional consultation
+- If requests seem to seek advice on illegal activities: Redirect to ethical legal channels
+- If user appears to be seeking specific legal advice: Clarify information vs advice distinction
 
-How can I assist you with your legal matter today?`;
+CURRENT CASE FOCUS: ${caseType}
+
+Remember: You're helping people understand their rights and options, not providing legal representation or formal advice.`;
   }
 
   // Generate response using Ollama
@@ -71,29 +89,18 @@ How can I assist you with your legal matter today?`;
         { role: 'user', content: userMessage }
       ];
 
-      const response = await fetch(`${this.baseUrl}/api/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: this.model,
-          messages: messages,
-          stream: false,
-          options: {
-            temperature: 0.7,
-            top_p: 0.9,
-            max_tokens: 1024
-          }
-        })
+      const response = await this.client.chat({
+        model: this.model,
+        messages: messages,
+        stream: false,
+        options: {
+          temperature: 0.7,
+          top_p: 0.9,
+          num_predict: 1024
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`Ollama API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const aiResponse = data.message?.content || 'AI response failed.';
+      const aiResponse = response.message?.content || 'AI response failed.';
 
       // Update conversation context (keep last 10 exchanges)
       this.conversationContext.push(
@@ -228,34 +235,79 @@ I'm here to help you understand your legal situation and options.
     if (!this.isConnected) return null;
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/show`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: this.model })
-      });
-
-      if (response.ok) {
-        return await response.json();
-      }
+      return await this.client.show({ name: this.model });
     } catch (error) {
       console.error('Failed to get model info:', error);
+      return null;
     }
-    return null;
   }
 
   // Download model if not available
   async ensureModel() {
     try {
-      const response = await fetch(`${this.baseUrl}/api/pull`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: this.model })
-      });
-
-      return response.ok;
+      await this.client.pull({ model: this.model });
+      return true;
     } catch (error) {
       console.error('Failed to pull model:', error);
       return false;
+    }
+  }
+
+  // Add streaming support for real-time responses
+  async generateResponseStream(userMessage, caseContext = null, onChunk = null) {
+    if (!this.isConnected) {
+      await this.checkConnection();
+      if (!this.isConnected) {
+        return this.getFallbackResponse(userMessage);
+      }
+    }
+
+    try {
+      const systemPrompt = this.buildSystemPrompt(caseContext?.type);
+
+      // Build conversation context
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...this.conversationContext,
+        { role: 'user', content: userMessage }
+      ];
+
+      let fullResponse = '';
+
+      const response = await this.client.chat({
+        model: this.model,
+        messages: messages,
+        stream: true,
+        options: {
+          temperature: 0.7,
+          top_p: 0.9,
+          num_predict: 1024
+        }
+      });
+
+      for await (const part of response) {
+        const chunk = part.message?.content || '';
+        fullResponse += chunk;
+        if (onChunk && chunk) {
+          onChunk(chunk);
+        }
+      }
+
+      // Update conversation context (keep last 10 exchanges)
+      this.conversationContext.push(
+        { role: 'user', content: userMessage },
+        { role: 'assistant', content: fullResponse }
+      );
+
+      if (this.conversationContext.length > 20) {
+        this.conversationContext = this.conversationContext.slice(-20);
+      }
+
+      return fullResponse;
+
+    } catch (error) {
+      console.error('🔥 Ollama streaming failed:', error);
+      return this.getFallbackResponse(userMessage, error);
     }
   }
 }

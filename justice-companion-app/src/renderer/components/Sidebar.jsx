@@ -4,8 +4,16 @@ import './Sidebar.css';
 // ChatGPT-Style Sidebar Navigation Component
 // Clean, minimal design for legal assistant interface
 
-const Sidebar = ({ isOpen, onToggle, activeView, onViewChange, currentCase, cases = [] }) => {
-  const [collapsed, setCollapsed] = useState(false);
+const Sidebar = ({
+  isOpen,
+  collapsed = false,
+  onToggle,
+  onCollapsedChange,
+  activeView,
+  onViewChange,
+  currentCase,
+  cases = []
+}) => {
 
   // Ensure cases is always an array to prevent slice errors
   const safeCases = Array.isArray(cases) ? cases : [];
@@ -34,13 +42,24 @@ const Sidebar = ({ isOpen, onToggle, activeView, onViewChange, currentCase, case
       icon: '📅',
       label: 'Timeline',
       description: 'Case history'
+    },
+    {
+      id: 'consent',
+      icon: '🔒',
+      label: 'Privacy',
+      description: 'Consent & GDPR'
     }
   ];
 
   const recentCases = safeCases.slice(0, 5);
 
   const handleToggleCollapse = () => {
-    setCollapsed(!collapsed);
+    // On mobile, toggle sidebar open/close; on desktop, toggle collapse
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      onToggle(); // Mobile: toggle open/close
+    } else {
+      onCollapsedChange(!collapsed); // Desktop: toggle collapse/expand
+    }
   };
 
   return (
@@ -52,6 +71,9 @@ const Sidebar = ({ isOpen, onToggle, activeView, onViewChange, currentCase, case
             <span className="sidebar-logo-icon">⚖️</span>
             <span className="sidebar-logo-text">Legal Assistant</span>
           </div>
+        </div>
+
+        <div className="sidebar-toggle-container">
           <button
             className="sidebar-toggle"
             onClick={handleToggleCollapse}
@@ -71,7 +93,19 @@ const Sidebar = ({ isOpen, onToggle, activeView, onViewChange, currentCase, case
         )}
 
         {/* New conversation button */}
-        <button className="new-conversation-btn">
+        <button
+          className="new-conversation-btn"
+          onClick={() => {
+            // Clear the chat and start a new conversation
+            if (window.justiceAPI && window.justiceAPI.aiClearSession) {
+              window.justiceAPI.aiClearSession();
+            }
+            // Trigger a view change to chat and reset it
+            onViewChange('chat');
+            // Dispatch a custom event to signal chat reset
+            window.dispatchEvent(new CustomEvent('resetChat'));
+          }}
+        >
           <span>+</span>
           <span>New Chat</span>
         </button>
@@ -86,9 +120,13 @@ const Sidebar = ({ isOpen, onToggle, activeView, onViewChange, currentCase, case
                 className={`sidebar-item ${activeView === item.id ? 'active' : ''}`}
                 onClick={() => {
                   onViewChange(item.id);
-                  if (typeof window !== 'undefined' && window.innerWidth < 768) onToggle();
+                  // Always close sidebar on mobile after selection for better UX
+                  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+                    setTimeout(() => onToggle(), 150); // Small delay for visual feedback
+                  }
                 }}
                 title={item.label}
+                aria-current={activeView === item.id ? 'page' : undefined}
               >
                 <span className="sidebar-icon">{item.icon}</span>
                 <div className="sidebar-item-content">
@@ -165,31 +203,6 @@ const Sidebar = ({ isOpen, onToggle, activeView, onViewChange, currentCase, case
         </div>
       </div>
 
-      {/* Mobile toggle button */}
-      {typeof window !== 'undefined' && window.innerWidth < 768 && (
-        <button
-          className="sidebar-toggle mobile-toggle"
-          onClick={onToggle}
-          aria-label="Toggle sidebar"
-          style={{
-            position: 'fixed',
-            top: '1rem',
-            left: '1rem',
-            zIndex: 1000,
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-medium)',
-            borderRadius: 'var(--radius-md)',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}
-        >
-          {isOpen ? '✕' : '☰'}
-        </button>
-      )}
 
       {/* Overlay for mobile */}
       {isOpen && typeof window !== 'undefined' && window.innerWidth < 768 && (

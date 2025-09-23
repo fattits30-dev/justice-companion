@@ -3,6 +3,13 @@ const { contextBridge, ipcRenderer } = require('electron');
 // Preload script - Bridge between renderer and main process
 // Provides secure IPC communication
 
+// Expose new chat API for ChatService architecture
+contextBridge.exposeInMainWorld('electronAPI', {
+  // Unified invoke method for ChatAPI compatibility
+  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args)
+});
+
+// Keep legacy justiceAPI for backward compatibility
 contextBridge.exposeInMainWorld('justiceAPI', {
   // Case management operations
   saveCase: (caseData) => ipcRenderer.invoke('save-case', caseData),
@@ -41,8 +48,13 @@ contextBridge.exposeInMainWorld('justiceAPI', {
   createSession: (userCredentials) => ipcRenderer.invoke('create-session', userCredentials),
   validateSession: (sessionId) => ipcRenderer.invoke('validate-session', sessionId),
 
+  // Legal Compliance & Consent Management
+  acceptDisclaimer: (acceptanceData) => ipcRenderer.invoke('accept-disclaimer', acceptanceData),
+  withdrawConsent: (withdrawalData) => ipcRenderer.invoke('withdraw-consent', withdrawalData),
+  getConsentStatus: () => ipcRenderer.invoke('get-consent-status'),
+  getConsentReport: (filters) => ipcRenderer.invoke('get-consent-report', filters),
+
   // System operations
-  acceptDisclaimer: () => ipcRenderer.invoke('accept-disclaimer'),
   openExternal: (url) => ipcRenderer.invoke('open-external', url),
   selectFile: () => ipcRenderer.invoke('select-file'),
   
@@ -62,7 +74,17 @@ contextBridge.exposeInMainWorld('justiceAPI', {
   // Remove event listeners
   removeAllListeners: (channel) => {
     ipcRenderer.removeAllListeners(channel);
-  }
+  },
+
+  // MCP Memory Integration Support
+  // These functions provide memory persistence for case data
+  mcpMemorySearch: (params) => ipcRenderer.invoke('mcp-memory-search', params),
+  mcpMemoryCreateEntities: (params) => ipcRenderer.invoke('mcp-memory-create-entities', params),
+  mcpMemoryAddObservations: (params) => ipcRenderer.invoke('mcp-memory-add-observations', params),
+  mcpMemoryCreateRelations: (params) => ipcRenderer.invoke('mcp-memory-create-relations', params),
+
+  // Flag to indicate this is the Electron API
+  _isElectronAPI: true
 });
 
 // System information
@@ -75,4 +97,22 @@ contextBridge.exposeInMainWorld('systemInfo', {
   isLinux: process.platform === 'linux'
 });
 
+// Expose MCP Memory functions globally for compatibility with existing code
+contextBridge.exposeInMainWorld('mcp__memory__search_nodes', (params) =>
+  ipcRenderer.invoke('mcp-memory-search', params)
+);
+
+contextBridge.exposeInMainWorld('mcp__memory__create_entities', (params) =>
+  ipcRenderer.invoke('mcp-memory-create-entities', params)
+);
+
+contextBridge.exposeInMainWorld('mcp__memory__add_observations', (params) =>
+  ipcRenderer.invoke('mcp-memory-add-observations', params)
+);
+
+contextBridge.exposeInMainWorld('mcp__memory__create_relations', (params) =>
+  ipcRenderer.invoke('mcp-memory-create-relations', params)
+);
+
 console.log('Preload bridge initialized. IPC channels ready.');
+console.log('MCP Memory functions exposed globally for case management compatibility.');

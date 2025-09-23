@@ -82,14 +82,32 @@ const CaseManager = ({ cases, currentCase, onSelectCase, onNewCase, onRefresh })
 
   const getCaseTypeLabel = (type) => {
     const types = {
-      'tenancy': 'Housing Matter',
-      'consumer': 'Consumer Issue',
-      'employment': 'Employment Case',
-      'benefits': 'Benefits Appeal',
-      'police': 'Civil Rights',
+      'tenancy': 'Housing & Tenancy',
+      'consumer': 'Consumer Rights',
+      'employment': 'Employment Law',
+      'benefits': 'Benefits & Welfare',
+      'police': 'Police & Criminal',
+      'family': 'Family Law',
+      'immigration': 'Immigration',
+      'debt': 'Debt & Finance',
       'other': 'General Legal Matter'
     };
     return types[type] || 'Legal Matter';
+  };
+
+  const getCaseTypeDescription = (type) => {
+    const descriptions = {
+      'tenancy': 'Landlord disputes, eviction notices, housing conditions',
+      'consumer': 'Faulty goods, service complaints, contract issues',
+      'employment': 'Workplace rights, dismissal, discrimination',
+      'benefits': 'Universal Credit, PIP, ESA appeals',
+      'police': 'Arrests, cautions, police conduct',
+      'family': 'Divorce, child custody, domestic issues',
+      'immigration': 'Visa applications, deportation, asylum',
+      'debt': 'Creditor issues, bailiffs, bankruptcy',
+      'other': 'Other legal matters requiring assistance'
+    };
+    return descriptions[type] || 'Legal assistance required';
   };
 
   return (
@@ -171,7 +189,9 @@ const CaseManager = ({ cases, currentCase, onSelectCase, onNewCase, onRefresh })
               <option value="other">Other Legal Matter</option>
             </select>
             <div id="case-type-help" className="form-help">
-              Select the category that best describes your legal issue
+              Select the category that best describes your legal issue. This helps organize your case and provide relevant guidance.
+              <br />
+              <small><strong>Current selection:</strong> {getCaseTypeDescription(newCaseData.type)}</small>
             </div>
           </div>
 
@@ -260,17 +280,22 @@ const CaseManager = ({ cases, currentCase, onSelectCase, onNewCase, onRefresh })
               track important dates, and get AI-powered guidance.
             </p>
             <div className="getting-started">
-              <h4>Getting Started:</h4>
+              <h4>Quick Start Guide:</h4>
               <ul>
-                <li>Click "New Case" to begin</li>
-                <li>Describe your legal situation</li>
-                <li>Get organized assistance and information</li>
-                <li>Track your progress</li>
+                <li><strong>Create Your First Case:</strong> Click "New Case" above to begin</li>
+                <li><strong>Choose the Right Category:</strong> Select the type that best matches your situation</li>
+                <li><strong>Set Priority Level:</strong> Mark urgent cases as "Critical" or "High" priority</li>
+                <li><strong>Document Everything:</strong> Use the chat to record important details and dates</li>
+                <li><strong>Track Progress:</strong> Monitor deadlines and organize evidence</li>
+                <li><strong>Get Help:</strong> Each case type provides specific legal guidance</li>
               </ul>
+              <div className="start-tip">
+                <strong>💡 Tip:</strong> Don't worry about perfect legal language - describe your situation in your own words. The system will help organize and structure your information.
+              </div>
             </div>
           </div>
         ) : (
-          cases.map(caseItem => (
+          (Array.isArray(cases) ? cases : []).map(caseItem => (
             <div
               key={caseItem.id}
               className={`case-card ${currentCase?.id === caseItem.id ? 'active' : ''} ${getUrgencyClass(caseItem.urgency)}`}
@@ -303,10 +328,20 @@ const CaseManager = ({ cases, currentCase, onSelectCase, onNewCase, onRefresh })
               </div>
               
               <div className="case-meta">
-                <span className="case-type">{getCaseTypeLabel(caseItem.type)}</span>
+                <span className="case-type" title={getCaseTypeDescription(caseItem.type)}>
+                  {getCaseTypeLabel(caseItem.type)}
+                </span>
                 {caseItem.opponent && (
                   <span className="case-opponent">vs. {caseItem.opponent}</span>
                 )}
+                <div className="case-priority">
+                  <span className={`priority-badge priority-${caseItem.urgency}`}>
+                    {caseItem.urgency === 'critical' ? '🚨 Critical' :
+                     caseItem.urgency === 'high' ? '⚠️ High Priority' :
+                     caseItem.urgency === 'medium' ? '📋 Medium Priority' :
+                     '📝 Low Priority'}
+                  </span>
+                </div>
               </div>
 
               <div className="case-stats">

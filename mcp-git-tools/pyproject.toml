@@ -1,0 +1,19 @@
+[project]
+name = "mcp-git-tools"
+version = "1.0.0"
+description = "Focused MCP server for Git version control operations"
+authors = [
+    { name = "Justice Companion", email = "dev@justicecompanion.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=0.5.0",
+    "mcp>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+mcp-git-tools = "main:mcp"

@@ -1,0 +1,839 @@
+{
+  "scenario": "fresh-install",
+  "platform": "ubuntu-latest",
+  "nodeVersion": "v20.0.0",
+  "startTime": "2025-08-23T17:00:00.000Z",
+  "endTime": "2025-08-23T17:30:00.000Z",
+  "duration": 1800000,
+  "summary": {
+    "passed": 100,
+    "failed": 0,
+    "skipped": 0
+  },
+  "steps": [
+    {
+      "name": "[Method 1: NPM Package Uninstall] Step 1: Uninstall the NPM Package",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "npm uninstall -g @paulduvall/claude-dev-toolkit",
+          "type": "uninstall",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "npm list -g @paulduvall/claude-dev-toolkit",
+          "type": "verification",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Uninstall] Step 2: Remove Custom Commands",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/commands/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "rm -rf .claude/commands/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Uninstall] Step 3: Remove Hooks",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/hooks/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "rm -rf .claude/hooks/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Uninstall] Step 4: Remove AI Subagents",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/subagents/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "rm -rf .claude/subagents/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Uninstall] Step 5: Clean Configuration Files (Optional)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/config/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Uninstall] Step 1: Remove Custom Commands",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/commands/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "rm -rf .claude/commands/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Uninstall] Step 2: Remove Hooks",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/hooks/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "rm -rf .claude/hooks/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Uninstall] Step 3: Remove AI Subagents",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/subagents/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "rm -rf .claude/subagents/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Uninstall] Step 4: Clean Configuration Files (Optional)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "rm -rf ~/.claude/config/",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Uninstall] Step 5: Remove Repository (Optional)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "echo \"Remove repository manually: rm -rf /path/to/your/claude-code\"",
+          "type": "cleanup",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Installation (Recommended)] Step 1: Install Claude Code (if not already installed)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "npm install -g @anthropic-ai/claude-code",
+          "type": "install",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "claude --version",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Installation (Recommended)] Step 2: Install Claude Dev Toolkit",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "npm install -g @paulduvall/claude-dev-toolkit",
+          "type": "install",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "claude-commands --version",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Installation (Recommended)] Step 3: Deploy Core Commands",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "claude-commands install --active",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Installation (Recommended)] Step 4: Install AI Subagents (Optional)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "claude-commands subagents --install",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Installation (Recommended)] Step 5: Configure Settings",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "claude-commands config",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "claude-commands config --template comprehensive-settings.json",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 1: NPM Package Installation (Recommended)] Step 6: Install Experimental Commands (Optional)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "claude-commands install --experiments",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "claude-commands install --all",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Installation (Advanced)] Step 1: Clone the Repository",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "git clone https://github.com/PaulDuvall/claude-code.git",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cd claude-code",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Installation (Advanced)] Step 2: Set Environment Variables",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "export ANTHROPIC_API_KEY=$YOUR_ACTUAL_API_KEY",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "echo \"export ANTHROPIC_API_KEY=\\$YOUR_ACTUAL_API_KEY\" >> ~/.zshrc",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "source ~/.zshrc",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Installation (Advanced)] Step 3: Run Complete Setup",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "./setup.sh",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./setup.sh --dry-run",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Installation (Advanced)] Step 4: Configure Claude Code",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "./configure-claude-code.sh",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Installation (Advanced)] Step 5: Deploy Custom Commands",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "./deploy.sh",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./deploy.sh --experiments",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./deploy.sh --all",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Method 2: Repository-Based Installation (Advanced)] Step 6: Install AI Subagents",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "./deploy-subagents.sh",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Common Steps (Both Methods)] Create Project Context (CLAUDE.md)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "cd /path/to/your/project",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cat > CLAUDE.md << 'EOF'",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "[Describe your project here]",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "[Define your development principles]",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "[Specify coding standards and practices]",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "[Define security requirements]",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "EOF",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Security Considerations] Set Up Hooks (Optional)",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "mkdir -p ~/.claude/hooks/",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "chmod 700 ~/.claude/hooks/",
+          "type": "permissions",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "echo \"Hooks installation is handled during package installation\"",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "echo \"Available hooks: file-logger, prevent-credential-exposure\"",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "mkdir -p ~/.claude/hooks/",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "chmod 700 ~/.claude/hooks/",
+          "type": "permissions",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cp hooks/prevent-credential-exposure.sh ~/.claude/hooks/",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "chmod +x ~/.claude/hooks/prevent-credential-exposure.sh",
+          "type": "permissions",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cp hooks/*.sh ~/.claude/hooks/",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "chmod +x ~/.claude/hooks/*.sh",
+          "type": "permissions",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Security Considerations] Verify Installation",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "claude --version",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "ls ~/.claude/commands/x*.md",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "claude-commands list",
+          "type": "toolkit",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "claude --version",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "ls ~/.claude/commands/x*.md",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./verify-setup.sh --verbose",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./validate-commands.sh",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./setup.sh --setup-type basic",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./setup.sh --setup-type security",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./setup.sh --setup-type comprehensive",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./setup.sh --force",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./setup.sh --skip-configure --skip-hooks",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Version Control Best Practices] Backup Your Customizations",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "mkdir ~/my-claude-customizations",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cd ~/my-claude-customizations",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git init",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cp -r ~/.claude .claude",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "mkdir -p .claude/commands .claude/hooks .claude/subagents .claude/config",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git add .",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git commit -m \"Initial Claude Code customization backup\"",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git remote add origin YOUR_REPOSITORY_URL",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git push -u origin main",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Version Control Best Practices] Create Backup Script",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "cat > backup-claude.sh << 'EOF'",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "cp -r ~/.claude/* .claude/",
+          "type": "filesystem",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git add .",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git commit -m \"Update Claude customizations $(date +%Y-%m-%d)\"",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "git push",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "EOF",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "chmod +x backup-claude.sh",
+          "type": "permissions",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Using Custom Commands] Core Development Commands",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "/xtest        # Run tests with coverage",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xquality     # Check code quality with linting",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xsecurity    # Scan for vulnerabilities",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xgit         # Automated commit workflow",
+          "type": "git",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Using Custom Commands] Advanced Commands",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "/xpipeline    # CI/CD pipeline management",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xrelease     # Release management",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xconfig      # Configuration management",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xarchitecture # System architecture design",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xrefactor    # Interactive code refactoring",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "/xdebug       # Advanced debugging assistance",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Troubleshooting] Commands Not Appearing in Claude Code",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "pkill -f claude-code",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "ls -la ~/.claude/commands/",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./validate-commands.sh",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Troubleshooting] Permission Issues",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "chmod -R 755 ~/.claude",
+          "type": "permissions",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "[Troubleshooting] Installation Issues",
+      "type": "execution",
+      "status": "passed",
+      "commands": [
+        {
+          "command": "./setup.sh --force",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "command": "./verify-setup.sh --verbose",
+          "type": "general",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    }
+  ]
+}

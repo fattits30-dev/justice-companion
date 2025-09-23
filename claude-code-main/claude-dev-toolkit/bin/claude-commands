@@ -1,0 +1,331 @@
+#!/usr/bin/env node
+
+/**
+ * Claude Commands CLI
+ * Main entry point for the claude-dev-toolkit
+ */
+
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const { program } = require('commander');
+const { version, description } = require('../package.json');
+
+program
+    .name('claude-commands')
+    .description(description)
+    .version(version);
+
+program
+    .command('list')
+    .description('List all available commands')
+    .option('-a, --active', 'Show only active commands')
+    .option('-e, --experiments', 'Show only experimental commands')
+    .action((options) => {
+        const claudeDir = path.join(os.homedir(), '.claude', 'commands');
+        
+        console.log('📦 Claude Custom Commands\n');
+        
+        if (fs.existsSync(claudeDir)) {
+            const allCommands = fs.readdirSync(claudeDir)
+                .filter(f => f.endsWith('.md'))
+                .map(f => f.replace('.md', ''))
+                .sort();
+            
+            if (allCommands.length > 0) {
+                console.log('🚀 Available Commands:');
+                allCommands.forEach(cmd => console.log(`  /${cmd}`));
+                console.log(`\n📊 Total: ${allCommands.length} commands`);
+            } else {
+                console.log('  No commands found');
+            }
+        } else {
+            console.log('  Commands directory not found');
+        }
+        
+        console.log('\n💡 Usage: Try /xhelp in Claude Code to see all commands');
+    });
+
+program
+    .command('install')
+    .description('Install command sets to ~/.claude/commands/')
+    .option('--active', 'Install production-ready commands (default)')
+    .option('--experiments', 'Install experimental commands only')
+    .option('--all', 'Install both active and experimental')
+    .option('--include <pattern>', 'Include specific commands matching pattern')
+    .option('--exclude <pattern>', 'Exclude commands matching pattern')
+    .option('--dry-run', 'Show what would be installed without making changes')
+    .option('--backup', 'Create backup before installation')
+    .action(async (options) => {
+        const installer = require('../lib/installer');
+        try {
+            const result = await installer.install(options);
+            if (!result.success && !result.dryRun) {
+                process.exit(1);
+            }
+        } catch (error) {
+            console.error(`Installation failed: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+program
+    .command('status')
+    .description('Show installation status')
+    .action(() => {
+        const claudeDir = path.join(os.homedir(), '.claude', 'commands');
+        
+        console.log('📊 Claude Dev Toolkit Status\n');
+        
+        // Check Claude directory
+        console.log('📁 Installation Path:');
+        console.log(`   Commands directory: ${fs.existsSync(claudeDir) ? '✅' : '❌'} ${claudeDir}\n`);
+        
+        // Count commands
+        let totalCount = 0;
+        
+        if (fs.existsSync(claudeDir)) {
+            totalCount = fs.readdirSync(claudeDir).filter(f => f.endsWith('.md')).length;
+        }
+        
+        console.log('📦 Command Inventory:');
+        console.log(`   Total commands: ${totalCount}\n`);
+        
+        // Package info
+        console.log('📋 Package Information:');
+        console.log(`   Version: ${version}`);
+        console.log(`   CLI Location: ${process.argv[1]}\n`);
+        
+        // Quick health check
+        const isHealthy = fs.existsSync(claudeDir) && totalCount > 0;
+        console.log(`🔍 Overall Status: ${isHealthy ? '✅ Healthy' : '⚠️  Issues detected'}`);
+        
+        if (!isHealthy) {
+            console.log('\n💡 Troubleshooting:');
+            console.log('   • Try: npm install -g @paulduvall/claude-dev-toolkit');
+            console.log('   • Or reinstall: claude-commands install --all');
+        }
+    });
+
+program
+    .command('subagents')
+    .description('Manage AI subagents for Claude Code')
+    .option('-l, --list', 'List available subagents')
+    .option('-i, --install', 'Install subagents to Claude Code')
+    .action((options) => {
+        const subagents = require('../lib/subagents');
+        subagents.handleCommand(options);
+    });
+
+program
+    .command('config')
+    .description('Manage Claude Code configuration templates')
+    .option('-l, --list', 'List available configuration templates')
+    .option('-t, --template <name>', 'Apply configuration template')
+    .action((options) => {
+        const config = require('../lib/config');
+        config.handleCommand(options);
+    });
+
+program
+    .command('configure')
+    .description('Configure Claude Code settings (replaces configure-claude-code.sh)')
+    .option('--template <name>', 'Apply named template')
+    .option('--interactive', 'Launch interactive configuration wizard')
+    .option('--validate', 'Validate current configuration')
+    .option('--reset', 'Reset to default configuration')
+    .option('--backup', 'Create backup before changes (default: true)')
+    .option('--no-backup', 'Skip backup creation')
+    .action(async (options) => {
+        const ConfigureCommand = require('../lib/configure-command');
+        const configureCmd = new ConfigureCommand();
+        try {
+            const result = await configureCmd.execute(options);
+            if (!result.success) {
+                process.exit(1);
+            }
+        } catch (error) {
+            console.error(`Configuration failed: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+program
+    .command('setup')
+    .description('Setup the Claude Dev Toolkit with custom commands and configuration')
+    .option('--type <template>', 'Configuration template to apply (basic, comprehensive, security-focused)')
+    .option('--commands <set>', 'Command set to install (active, experiments, all, none)')
+    .option('--skip-configure', 'Skip configuration step')
+    .option('--skip-hooks', 'Skip hooks installation')
+    .option('--force', 'Overwrite existing installation')
+    .option('--dry-run', 'Preview actions without executing')
+    .action(async (options) => {
+        const SetupCommand = require('../lib/setup-command');
+        const setupCmd = new SetupCommand();
+        try {
+            const result = await setupCmd.execute(options);
+            if (!result.success && !result.dryRun) {
+                process.exit(1);
+            }
+        } catch (error) {
+            console.error(`Setup failed: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+program
+    .command('verify')
+    .description('Verify the Claude Dev Toolkit installation status and health')
+    .option('--verbose', 'Show detailed verification information')
+    .option('--fix', 'Attempt to fix detected issues automatically')
+    .action(async (options) => {
+        const VerifyCommand = require('../lib/verify-command');
+        const verifyCmd = new VerifyCommand();
+        try {
+            const result = await verifyCmd.execute(options);
+            // Set exit code based on health status
+            if (result.overall === 'critical') {
+                process.exit(2);
+            } else if (result.overall === 'warning') {
+                process.exit(1);
+            }
+            // Exit 0 for healthy
+        } catch (error) {
+            console.error(`Verification failed: ${error.message}`);
+            process.exit(2);
+        }
+    });
+
+program
+    .command('backup [name]')
+    .description('Create named backup of Claude Code configuration')
+    .action(async (name) => {
+        const BackupRestoreCommand = require('../lib/backup-restore-command');
+        const backupCmd = new BackupRestoreCommand();
+        try {
+            const result = await backupCmd.backup(name);
+            if (!result.success) {
+                process.exit(1);
+            }
+        } catch (error) {
+            console.error(`Backup failed: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+program
+    .command('restore <name>')
+    .description('Restore from a named backup')
+    .action(async (name) => {
+        const BackupRestoreCommand = require('../lib/backup-restore-command');
+        const restoreCmd = new BackupRestoreCommand();
+        try {
+            const result = await restoreCmd.restore(name);
+            if (!result.success) {
+                process.exit(1);
+            }
+        } catch (error) {
+            console.error(`Restore failed: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+program
+    .command('oidc')
+    .description(`Configure GitHub Actions OIDC (OpenID Connect) integration with AWS
+
+    🎯 WHAT IT DOES:
+    • Creates GitHub OIDC identity provider in AWS
+    • Sets up IAM role with trust policy for GitHub Actions
+    • Configures repository variables for secure AWS access
+    • Enables passwordless authentication from GitHub to AWS
+
+    📋 PREREQUISITES (REQUIRED):
+    • AWS CLI installed and configured (aws configure)
+    • GitHub CLI authenticated (gh auth login) 
+    • Git repository with GitHub remote origin
+    • AWS account with IAM permissions
+
+    ⚙️  WHAT IT CREATES:
+    • AWS OIDC Identity Provider for GitHub
+    • IAM Role for GitHub Actions (with trust policy)
+    • IAM policies for AWS resource access
+    • GitHub repository variables (AWS_DEPLOYMENT_ROLE, AWS_REGION)
+
+    🚀 BASIC USAGE:
+    • claude-commands oidc                    # Auto-detect settings
+    • claude-commands oidc --dry-run          # Preview without changes
+    • claude-commands oidc --region us-west-2 # Specify AWS region`)
+    .option('--region <region>', 'AWS region for OIDC setup', 'us-east-1')
+    .option('--role-name <name>', 'IAM role name for GitHub Actions', 'GitHubActionsRole')
+    .option('--repository-path <path>', 'Path to repository for OIDC setup (auto-detected)', process.cwd())
+    .option('--dry-run', 'Preview actions without making changes (SAFE to run)')
+    .option('--verbose', 'Show detailed output during execution')
+    .action(async (options) => {
+        const OidcCommand = require('../lib/oidc-command');
+        const oidcCmd = new OidcCommand();
+        try {
+            const result = await oidcCmd.execute(options);
+            if (result.success) {
+                if (result.message) {
+                    console.log(result.message);
+                }
+                if (options.verbose && result.duration) {
+                    console.log(`✅ Completed in ${result.duration}ms`);
+                }
+            } else {
+                console.error(`❌ OIDC setup failed: ${result.error || 'Unknown error'}`);
+                if (result.enhancedError && result.enhancedError.suggestions) {
+                    result.enhancedError.suggestions.forEach(suggestion => {
+                        console.log(suggestion);
+                    });
+                }
+                process.exit(1);
+            }
+        } catch (error) {
+            console.error(`❌ OIDC setup failed: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+program
+    .command('update')
+    .description('Check for package updates')
+    .action(async () => {
+        const { version } = require('../package.json');
+        console.log('🔍 Checking for updates...\n');
+        console.log(`Current version: ${version}`);
+        
+        try {
+            const { execSync } = require('child_process');
+            const output = execSync('npm view @paulduvall/claude-dev-toolkit version', {
+                encoding: 'utf8',
+                stdio: 'pipe'
+            }).trim();
+            
+            console.log(`Latest version: ${output}`);
+            
+            if (output !== version) {
+                console.log('\n🆕 Update available!');
+                console.log('\nTo update, run:');
+                console.log('   npm update -g @paulduvall/claude-dev-toolkit');
+                
+                // Check for breaking changes in major version
+                const currentMajor = parseInt(version.split('.')[0]);
+                const latestMajor = parseInt(output.split('.')[0]);
+                
+                if (latestMajor > currentMajor) {
+                    console.log('\n⚠️  Major version update - may contain breaking changes');
+                    console.log('   Review release notes before updating');
+                }
+            } else {
+                console.log('\n✅ You are using the latest version');
+            }
+        } catch (error) {
+            console.error('❌ Could not check for updates');
+            console.log('   Please check your internet connection');
+            process.exit(1);
+        }
+    });
+
+program.parse(process.argv);

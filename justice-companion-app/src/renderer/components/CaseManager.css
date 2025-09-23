@@ -2,18 +2,25 @@
 /* Enhanced for Legal Tech - Professional Case Management Interface */
 
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f7f7f8;
-  --bg-tertiary: #ececf1;
-  --accent-green: #10a37f;
-  --accent-green-hover: #0d8f6f;
-  --text-primary: #2d333a;
-  --text-secondary: #6e767d;
-  --text-muted: #8e959c;
-  --border-light: #e5e5e5;
-  --border-medium: #d9d9e3;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  /* Calm, Professional Color Palette - Matching Disclaimer Theme */
+  --bg-primary: linear-gradient(135deg, #1e293b 0%, #1a202e 100%);
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #1a202e;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+  --border-subtle: rgba(148, 163, 184, 0.1);
+  --border-light: rgba(148, 163, 184, 0.15);
+  --border-medium: rgba(148, 163, 184, 0.2);
+  --accent-blue: #3b82f6;
+  --accent-blue-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  --accent-blue-hover: #2563eb;
+  --accent-green: #86efac;
+  --accent-green-soft: rgba(134, 239, 172, 0.1);
+  --accent-green-hover: #4ade80;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
@@ -803,12 +810,69 @@
   line-height: 1.4;
 }
 
+.getting-started strong {
+  color: var(--accent-green);
+}
+
+.start-tip {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 /* Enhanced case cards */
 .case-status {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   position: relative;
+}
+
+/* Priority badges for case cards */
+.case-priority {
+  margin-top: 0.5rem;
+}
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority-badge.priority-critical {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  animation: urgent-pulse 2s infinite;
+}
+
+.priority-badge.priority-high {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.priority-badge.priority-medium {
+  background: rgba(134, 239, 172, 0.1);
+  color: #86efac;
+  border: 1px solid rgba(134, 239, 172, 0.3);
+}
+
+.priority-badge.priority-low {
+  background: rgba(148, 163, 184, 0.1);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
 .urgency-indicator-small {
@@ -1007,7 +1071,7 @@
   }
 
   .case-description {
-    background: #f8f9fa;
+    background: rgba(30, 41, 59, 0.5);
     border-left-color: #333;
   }
 }

@@ -1,0 +1,108 @@
+{
+  "// Security-focused Claude Code settings.json template": "Copy to ~/.claude/settings.json",
+  "// Based on official Claude Code documentation": "https://docs.anthropic.com/en/docs/claude-code/settings",
+  "// Includes comprehensive security controls and governance": "",
+  
+  "// Restrictive tool permissions for security": "",
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Edit(*.md)",
+      "Edit(*.txt)",
+      "Edit(*.json)",
+      "Edit(*.yml)",
+      "Edit(*.yaml)",
+      "Bash(git *)",
+      "Bash(npm run *)",
+      "Bash(python -m *)",
+      "Bash(node *)",
+      "MultiEdit(*)"
+    ],
+    "deny": [
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(ssh *)",
+      "Bash(sudo *)",
+      "Bash(rm -rf *)",
+      "Bash(*production*)",
+      "Bash(*admin*)",
+      "Edit(/etc/*)",
+      "Edit(/root/*)",
+      "Edit(~/.ssh/*)",
+      "Read(/etc/passwd)",
+      "Read(/etc/shadow)",
+      "Read(~/.aws/*)",
+      "Read(~/.ssh/id_*)"
+    ]
+  },
+  
+  "// Comprehensive security hooks": "",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/prevent-credential-exposure.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/audit-bash-commands.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/log-all-operations.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command", 
+            "command": "~/.claude/hooks/prompt-security-scan.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/security-session-init.sh"
+          }
+        ]
+      }
+    ]
+  },
+  
+  "// Standard Claude Code environment variables": "",
+  "env": {
+    "DISABLE_TELEMETRY": "1",
+    "ANTHROPIC_LOG": "error"
+  },
+  
+  "// Security-focused settings": "",
+  "includeCoAuthoredBy": false,
+  "cleanupPeriodDays": 7,
+  
+  "// Disable auto-approval of MCP servers for security": "",
+  "enableAllProjectMcpServers": false
+}

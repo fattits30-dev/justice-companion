@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Justice Companion Browser Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+        .error { color: red; }
+        .success { color: green; }
+        .warning { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>Justice Companion Browser Debug Test</h1>
+
+    <div class="debug-section">
+        <h3>Environment Check</h3>
+        <div id="env-check">Checking...</div>
+    </div>
+
+    <div class="debug-section">
+        <h3>Module Loading Test</h3>
+        <div id="module-test">Testing module imports...</div>
+    </div>
+
+    <div class="debug-section">
+        <h3>React App Status</h3>
+        <div id="react-status">Loading React app...</div>
+        <iframe src="http://localhost:5173" width="100%" height="400" style="border: 1px solid #ccc;"></iframe>
+    </div>
+
+    <div class="debug-section">
+        <h3>Console Errors</h3>
+        <div id="console-errors">Capturing console errors...</div>
+    </div>
+
+    <script>
+        // Capture console errors
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const errors = [];
+
+        console.error = function(...args) {
+            errors.push({type: 'error', message: args.join(' '), timestamp: new Date().toISOString()});
+            originalError.apply(console, args);
+            updateErrorDisplay();
+        };
+
+        console.warn = function(...args) {
+            errors.push({type: 'warn', message: args.join(' '), timestamp: new Date().toISOString()});
+            originalWarn.apply(console, args);
+            updateErrorDisplay();
+        };
+
+        function updateErrorDisplay() {
+            const errorDiv = document.getElementById('console-errors');
+            if (errors.length === 0) {
+                errorDiv.innerHTML = '<span class="success">No errors detected</span>';
+            } else {
+                errorDiv.innerHTML = errors.map(e =>
+                    `<div class="${e.type}"><strong>${e.type.toUpperCase()}:</strong> ${e.message} <small>(${e.timestamp})</small></div>`
+                ).join('');
+            }
+        }
+
+        // Environment check
+        function checkEnvironment() {
+            const envDiv = document.getElementById('env-check');
+            const checks = [];
+
+            checks.push(`Browser: ${navigator.userAgent}`);
+            checks.push(`localStorage: ${typeof Storage !== 'undefined' ? 'Available' : 'Not available'}`);
+            checks.push(`fetch API: ${typeof fetch !== 'undefined' ? 'Available' : 'Not available'}`);
+            checks.push(`Module support: ${typeof import !== 'undefined' ? 'Available' : 'Not available'}`);
+
+            envDiv.innerHTML = checks.map(check => `<div>${check}</div>`).join('');
+        }
+
+        // Test module loading
+        async function testModules() {
+            const moduleDiv = document.getElementById('module-test');
+
+            try {
+                // Test if we can access the development server
+                const response = await fetch('http://localhost:5173/src/renderer/main.jsx');
+                if (response.ok) {
+                    moduleDiv.innerHTML = '<span class="success">✅ Development server accessible</span>';
+                } else {
+                    moduleDiv.innerHTML = '<span class="error">❌ Development server not responding</span>';
+                }
+            } catch (error) {
+                moduleDiv.innerHTML = `<span class="error">❌ Cannot reach development server: ${error.message}</span>`;
+            }
+        }
+
+        // Test React app status
+        function checkReactApp() {
+            const iframe = document.querySelector('iframe');
+            const statusDiv = document.getElementById('react-status');
+
+            iframe.onload = function() {
+                try {
+                    // Try to access iframe content
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const bodyText = iframeDoc.body.textContent;
+
+                    if (bodyText.includes('Initializing legal assistance system')) {
+                        statusDiv.innerHTML = '<span class="warning">⚠️ App stuck at loading screen - API initialization issue</span>';
+                    } else if (bodyText.includes('Justice Companion')) {
+                        statusDiv.innerHTML = '<span class="success">✅ App loaded successfully</span>';
+                    } else {
+                        statusDiv.innerHTML = '<span class="error">❌ Unknown app state</span>';
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = `<span class="warning">⚠️ Cannot access iframe content (CORS): ${error.message}</span>`;
+                }
+            };
+
+            iframe.onerror = function() {
+                statusDiv.innerHTML = '<span class="error">❌ Failed to load React app</span>';
+            };
+
+            // Timeout check
+            setTimeout(() => {
+                if (statusDiv.textContent === 'Loading React app...') {
+                    statusDiv.innerHTML = '<span class="error">❌ React app load timeout</span>';
+                }
+            }, 10000);
+        }
+
+        // Run all checks
+        checkEnvironment();
+        testModules();
+        checkReactApp();
+        updateErrorDisplay();
+
+        // Check for errors from the React app every second
+        setInterval(() => {
+            const iframe = document.querySelector('iframe');
+            try {
+                if (iframe.contentWindow && iframe.contentWindow.console) {
+                    // This might not work due to CORS but worth trying
+                }
+            } catch (e) {
+                // Expected to fail due to CORS
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

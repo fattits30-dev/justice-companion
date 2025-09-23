@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs').promises;
 const crypto = require('crypto');
@@ -38,12 +38,13 @@ class SecureLegalDatabase {
     this.dbPath = path.join(dbDir, `legal_${userProfile}_${Date.now()}.db`);
     this.encryptionKey = crypto.randomBytes(32).toString('hex');
 
-    return new Promise((resolve, reject) => {
-      this.db = new sqlite3.Database(this.dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
+    try {
+      this.db = new Database(this.dbPath, { verbose: console.log });
+      this.db.pragma('journal_mode = WAL');
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async createTables() {

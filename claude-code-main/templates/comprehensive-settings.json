@@ -1,0 +1,197 @@
+{
+  "// Comprehensive Claude Code settings.json template": "Copy to ~/.claude/settings.json",
+  "// Based on official Claude Code documentation": "https://docs.anthropic.com/en/docs/claude-code/settings",
+  "// Includes all advanced features and hook events": "",
+  
+  "// Comprehensive tool permissions": "",
+  "permissions": {
+    "allow": [
+      "Edit(*)",
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "MultiEdit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "LS(*)",
+      "Task(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "NotebookEdit(*)",
+      "BashOutput(*)",
+      "KillBash(*)"
+    ],
+    "ask": [
+      "Bash(sudo *)",
+      "Bash(rm -rf *)",
+      "Edit(/etc/*)",
+      "Read(~/.ssh/*)"
+    ],
+    "deny": [
+      "Bash(*production*)",
+      "Bash(*admin*)",
+      "Read(/etc/shadow)",
+      "Edit(/etc/passwd)"
+    ]
+  },
+  
+  "// Comprehensive hooks covering all supported events": "",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/prevent-credential-exposure.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/backup-before-edit.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/audit-bash-commands.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/log-all-operations.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/validate-changes.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/handle-notifications.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/prompt-analysis.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cleanup-on-stop.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/subagent-cleanup.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-cleanup.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre-compact-backup.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-init.sh"
+          }
+        ]
+      }
+    ]
+  },
+  
+  "// Standard Claude Code environment variables": "",
+  "env": {
+    "ANTHROPIC_API_KEY": "your-api-key-here",
+    "DISABLE_TELEMETRY": "1",
+    "ANTHROPIC_LOG": "info",
+    "CLAUDE_PROJECT_DIR": "."
+  },
+  
+  "// Advanced Claude Code configuration": "",
+  "includeCoAuthoredBy": true,
+  "cleanupPeriodDays": 30,
+  "model": "claude-3-5-sonnet-20241022",
+  
+  "// MCP server configuration": "",
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [
+    "approved-server-1",
+    "approved-server-2"
+  ],
+  "disabledMcpjsonServers": [
+    "blocked-server-1"
+  ],
+  
+  "// Optional: Custom API key helper script": "",
+  "apiKeyHelper": "~/.claude/scripts/get-api-key.sh",
+  
+  "// Optional: Force specific login method": "",
+  "forceLoginMethod": "api-key",
+  
+  "// Optional: Custom status line configuration": "",
+  "statusLine": {
+    "enabled": true,
+    "format": "Claude Code - Project: {project} | Model: {model} | Tools: {tools_count}"
+  }
+}

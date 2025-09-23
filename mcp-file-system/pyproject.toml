@@ -1,0 +1,19 @@
+[project]
+name = "mcp-file-system"
+version = "1.0.0"
+description = "Focused MCP server for file system operations"
+authors = [
+    { name = "Justice Companion", email = "dev@justicecompanion.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=0.5.0",
+    "mcp>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+mcp-file-system = "main:mcp"

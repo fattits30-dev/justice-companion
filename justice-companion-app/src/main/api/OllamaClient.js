@@ -1,4 +1,4 @@
-const axios = require('axios');
+const { Ollama } = require('ollama');
 const EventEmitter = require('events');
 
 /**
@@ -11,19 +11,25 @@ const EventEmitter = require('events');
  * - Context management for legal conversations
  */
 class OllamaClient extends EventEmitter {
-  constructor(config = {}) {
+  constructor(configOverride = {}) {
     super();
 
-    this.baseURL = config.baseURL || 'http://localhost:11434';
-    this.model = config.model || 'llama3.1:8b';
-    this.timeout = config.timeout || 120000; // Increased to 2 minutes for AI processing
-    this.maxRetries = config.maxRetries || 3;
-    this.retryDelay = config.retryDelay || 1000;
+    // Load centralized environment configuration
+    const envConfig = require('../../config/environment');
+
+    this.baseURL = configOverride.baseURL || envConfig.ollamaConfig.baseUrl;
+    this.model = configOverride.model || envConfig.ollamaConfig.model;
+    this.timeout = configOverride.timeout || envConfig.ollamaConfig.timeout || 120000; // Increased to 2 minutes for AI processing
+    this.maxRetries = configOverride.maxRetries || envConfig.ollamaConfig.maxRetries || 3;
+    this.retryDelay = configOverride.retryDelay || 1000;
+
+    // Initialize Ollama client
+    this.ollamaClient = new Ollama({ host: this.baseURL });
 
     // Circuit breaker configuration
     this.circuitBreaker = {
-      failureThreshold: config.failureThreshold || 5,
-      recoveryTimeout: config.recoveryTimeout || 60000,
+      failureThreshold: configOverride.failureThreshold || 5,
+      recoveryTimeout: configOverride.recoveryTimeout || 60000,
       state: 'CLOSED', // CLOSED, OPEN, HALF_OPEN
       failures: 0,
       lastFailureTime: null,
@@ -32,7 +38,7 @@ class OllamaClient extends EventEmitter {
 
     // Legal context management
     this.contextHistory = new Map();
-    this.maxContextLength = config.maxContextLength || 10;
+    this.maxContextLength = configOverride.maxContextLength || envConfig.config.ai.maxContextLength || 10;
 
     // Telemetry data
     this.telemetry = {
@@ -44,66 +50,38 @@ class OllamaClient extends EventEmitter {
       uptime: Date.now()
     };
 
-    // Initialize axios client with interceptors
-    this.client = this.createHttpClient();
+    // Initialize telemetry tracking for the official client
 
     // Legal prompt templates
     this.legalPrompts = this.initializeLegalPrompts();
 
     // Mock responses for testing
-    this.mockMode = config.mockMode || false;
+    this.mockMode = configOverride.mockMode || false;
     this.mockResponses = this.initializeMockResponses();
 
-    this.emit('initialized', { config, telemetry: this.telemetry });
+    this.emit('initialized', { config: configOverride, telemetry: this.telemetry });
   }
 
   /**
-   * Create enhanced HTTP client with interceptors
+   * Track request telemetry manually since we're using the official client
    */
-  createHttpClient() {
-    const client = axios.create({
-      baseURL: this.baseURL,
-      timeout: this.timeout,
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Justice-Companion/1.0'
-      }
-    });
+  trackRequestStart() {
+    this.telemetry.totalRequests++;
+    this.telemetry.lastRequestTime = Date.now();
+    this.emit('request_start', { url: '/api/chat', method: 'POST' });
+  }
 
-    // Request interceptor for telemetry
-    client.interceptors.request.use(
-      (config) => {
-        this.telemetry.totalRequests++;
-        this.telemetry.lastRequestTime = Date.now();
-        this.emit('request_start', { url: config.url, method: config.method });
-        return config;
-      },
-      (error) => {
-        this.telemetry.failedRequests++;
-        this.emit('request_error', { error: error?.message || 'Unknown error' });
-        return Promise.reject(error);
-      }
-    );
+  trackRequestSuccess(responseTime) {
+    this.telemetry.successfulRequests++;
+    this.updateAverageResponseTime(responseTime);
+    this.resetCircuitBreaker();
+    this.emit('request_success', { responseTime, status: 200 });
+  }
 
-    // Response interceptor for telemetry and error handling
-    client.interceptors.response.use(
-      (response) => {
-        const responseTime = Date.now() - this.telemetry.lastRequestTime;
-        this.telemetry.successfulRequests++;
-        this.updateAverageResponseTime(responseTime);
-        this.resetCircuitBreaker();
-        this.emit('request_success', { responseTime, status: response.status });
-        return response;
-      },
-      (error) => {
-        this.telemetry.failedRequests++;
-        this.recordCircuitBreakerFailure();
-        this.emit('request_failed', { error: error?.message || 'Unknown error', status: error.response?.status });
-        return Promise.reject(error);
-      }
-    );
-
-    return client;
+  trackRequestFailure(error) {
+    this.telemetry.failedRequests++;
+    this.recordCircuitBreakerFailure();
+    this.emit('request_failed', { error: error?.message || 'Unknown error' });
   }
 
   /**
@@ -289,14 +267,12 @@ Tell me more about your specific situation so I can provide relevant information
       // Add system prompt for legal context
       const messagesWithContext = this.addLegalContext(filteredMessages, options.domain);
 
-      // Convert messages to single prompt for generate API
-      const prompt = this.convertMessagesToPrompt(messagesWithContext);
-
-      // Execute request with retry logic
+      // Execute request with retry logic using official Ollama client
+      this.trackRequestStart();
       const response = await this.executeWithRetry(async () => {
-        return await this.client.post('/api/generate', {
+        return await this.ollamaClient.chat({
           model: this.model,
-          prompt: prompt,
+          messages: messagesWithContext,
           stream: options.stream || false,
           options: {
             temperature: options.temperature || 0.7,
@@ -307,7 +283,10 @@ Tell me more about your specific situation so I can provide relevant information
         });
       });
 
-      const result = this.processLegalResponse(response.data);
+      const responseTime = Date.now() - this.telemetry.lastRequestTime;
+      this.trackRequestSuccess(responseTime);
+
+      const result = this.processLegalResponse(response, filteredMessages);
 
       // Update context if session provided
       if (options.sessionId) {
@@ -323,6 +302,52 @@ Tell me more about your specific situation so I can provide relevant information
       return result;
 
     } catch (error) {
+      this.trackRequestFailure(error);
+      this.emit('chat_failed', {
+        error: error?.message || 'Unknown error',
+        duration: Date.now() - startTime
+      });
+
+      throw this.createEnhancedError(error);
+    }
+  }
+
+  /**
+   * Streaming chat for real-time responses
+   */
+  async chatStream(messages, options = {}) {
+    const startTime = Date.now();
+
+    try {
+      // Check circuit breaker
+      if (!this.isCircuitBreakerClosed()) {
+        throw new Error('Service temporarily unavailable - circuit breaker open');
+      }
+
+      // Apply legal safety filters
+      const filteredMessages = this.applyContentFilter(messages);
+
+      // Add system prompt for legal context
+      const messagesWithContext = this.addLegalContext(filteredMessages, options.domain);
+
+      // Execute streaming request
+      this.trackRequestStart();
+      const stream = await this.ollamaClient.chat({
+        model: this.model,
+        messages: messagesWithContext,
+        stream: true,
+        options: {
+          temperature: options.temperature || 0.7,
+          top_p: options.top_p || 0.9,
+          num_predict: options.max_tokens || 2048,
+          ...options.modelOptions
+        }
+      });
+
+      return stream;
+
+    } catch (error) {
+      this.trackRequestFailure(error);
       this.emit('chat_failed', {
         error: error?.message || 'Unknown error',
         duration: Date.now() - startTime
@@ -428,26 +453,75 @@ Tell me more about your specific situation so I can provide relevant information
   }
 
   /**
-   * Apply content filtering for legal safety
+   * Apply enhanced content filtering for legal safety and ethical AI use
    */
   applyContentFilter(messages) {
-    const bannedPhrases = [
-      'how to sue',
+    const advisoryPhrases = [
+      'what should i do',
+      'should i sue',
       'file a lawsuit',
-      'legal advice',
-      'what should I do legally',
-      'am I liable',
-      'can I be prosecuted'
+      'take legal action',
+      'am i liable',
+      'can i be prosecuted',
+      'is this legal',
+      'will i win',
+      'guarantee',
+      'definitely sue'
+    ];
+
+    const harmfulContent = [
+      'hide assets',
+      'avoid paying',
+      'illegal activity',
+      'false testimony',
+      'perjury',
+      'lie in court',
+      'destroy evidence',
+      'intimidate witness',
+      'fraudulent claim'
+    ];
+
+    const emergencyKeywords = [
+      'suicide',
+      'kill myself',
+      'domestic violence',
+      'being threatened',
+      'immediate danger',
+      'physical harm'
     ];
 
     return messages.map(message => {
       if (message.role === 'user') {
-        let content = message.content.toLowerCase();
+        const content = message.content.toLowerCase();
 
-        // Check for requests for actual legal advice
-        if (bannedPhrases.some(phrase => content.includes(phrase))) {
-          // Flag for legal disclaimer injection
+        // Check for emergency situations requiring immediate attention
+        if (emergencyKeywords.some(keyword => content.includes(keyword))) {
+          message._emergencyFlag = true;
+          message._requiresEmergencyResponse = true;
+        }
+
+        // Check for potentially harmful requests
+        if (harmfulContent.some(phrase => content.includes(phrase))) {
+          message._harmfulContent = true;
+          message._requiresEthicalGuidance = true;
+        }
+
+        // Check for requests that might be seeking legal advice
+        if (advisoryPhrases.some(phrase => content.includes(phrase))) {
           message._requiresLegalDisclaimer = true;
+          message._requiresInformationOnly = true;
+        }
+
+        // Flag complex legal areas requiring professional consultation
+        const complexLegalAreas = [
+          'criminal law', 'immigration', 'medical negligence',
+          'serious injury', 'complex commercial', 'bankruptcy',
+          'child custody', 'divorce', 'inheritance', 'tax law'
+        ];
+
+        if (complexLegalAreas.some(area => content.includes(area))) {
+          message._complexLegalArea = true;
+          message._requiresProfessionalAdvice = true;
         }
       }
 
@@ -489,21 +563,47 @@ Tell me more about your specific situation so I can provide relevant information
   }
 
   /**
-   * Process and enhance legal responses
+   * Process and enhance legal responses with safety checks
    */
-  processLegalResponse(response) {
-    console.log('DEBUG: Raw Ollama response structure:', JSON.stringify(response, null, 2));
-    // FIXED: Generate API uses response.response, Chat API uses response.message.content
-    let content = response.response || response.message?.content || '';
-    console.log('DEBUG: Extracted content:', content);
+  processLegalResponse(response, originalMessages = []) {
+    // Official Ollama client uses response.message.content
+    let content = response.message?.content || response.response || '';
 
-    // Ensure legal disclaimer is present
-    if (!content.includes('legal advice') && !content.includes('DISCLAIMER')) {
+    // Check if original message had special flags from content filtering
+    const userMessage = originalMessages.find(msg => msg.role === 'user');
+    const messageFlags = {
+      emergency: userMessage?._emergencyFlag || false,
+      harmful: userMessage?._harmfulContent || false,
+      requiresDisclaimer: userMessage?._requiresLegalDisclaimer || false,
+      complexArea: userMessage?._complexLegalArea || false,
+      requiresProfessional: userMessage?._requiresProfessionalAdvice || false
+    };
+
+    // Handle emergency situations with immediate resources
+    if (messageFlags.emergency) {
+      content = this.createEmergencyResponse(content);
+    }
+
+    // Handle harmful content requests with ethical guidance
+    if (messageFlags.harmful) {
+      content = this.createEthicalGuidanceResponse();
+    }
+
+    // Enhance complex legal area responses
+    if (messageFlags.complexArea || messageFlags.requiresProfessional) {
+      content = this.enhanceComplexLegalResponse(content);
+    }
+
+    // Ensure legal disclaimer is present for advice-seeking queries
+    if (messageFlags.requiresDisclaimer || !content.includes('legal advice') && !content.includes('DISCLAIMER')) {
       content += '\n\n' + this.legalPrompts.DISCLAIMER;
     }
 
     // Add risk assessment
-    const riskLevel = this.assessResponseRisk(content);
+    const riskLevel = this.assessResponseRisk(content, messageFlags);
+
+    // Add legal safeguards summary
+    const safeguards = this.getSafeguardsSummary(messageFlags);
 
     return {
       content,
@@ -511,19 +611,154 @@ Tell me more about your specific situation so I can provide relevant information
       tokensUsed: response.eval_count || 0,
       model: response.model || this.model,
       timestamp: new Date().toISOString(),
-      disclaimer: true // Boolean flag as expected by tests
+      disclaimer: true, // Boolean flag as expected by tests
+      safeguards,
+      messageFlags
     };
   }
 
   /**
-   * Assess risk level of AI response
+   * Create emergency response with immediate resources
    */
-  assessResponseRisk(content) {
+  createEmergencyResponse(originalContent) {
+    return `🚨 **EMERGENCY RESOURCES** 🚨
+
+If you are in immediate danger, please contact emergency services right away:
+
+**IMMEDIATE HELP:**
+• **Emergency Services**: 999 (Police, Fire, Ambulance)
+• **National Domestic Violence Helpline**: 0808 2000 247 (24/7)
+• **Samaritans** (Mental Health Crisis): 116 123 (24/7)
+• **Crisis Support**: Text SHOUT to 85258
+
+**ADDITIONAL SUPPORT:**
+• **Women's Aid**: 1800 341 900
+• **Men's Advice Line**: 0808 801 0327
+• **LGBT+ Domestic Violence**: 0800 999 5428
+• **GALOP** (LGBT+ helpline): 0800 999 5428
+
+${originalContent}
+
+**Important**: If you are in immediate physical danger, please contact emergency services (999) before seeking legal advice. Your safety is the priority.
+
+${this.legalPrompts.DISCLAIMER}`;
+  }
+
+  /**
+   * Create ethical guidance response for harmful requests
+   */
+  createEthicalGuidanceResponse() {
+    return `**Ethical Legal Practice Guidelines**
+
+I understand you may be facing a difficult situation, but I cannot provide guidance on activities that could be:
+
+• **Illegal or potentially fraudulent**
+• **Harmful to others or yourself**
+• **Undermining of legal processes**
+• **Deceptive or dishonest practices**
+
+**Instead, I Can Help You With:**
+✅ Understanding your legitimate legal rights
+✅ Proper legal procedures and processes
+✅ Finding qualified legal representation
+✅ Resources for resolving disputes ethically
+✅ Options for addressing grievances lawfully
+
+**Recommended Actions:**
+1. **Consult a qualified solicitor** about your situation
+2. **Document facts objectively** without exaggeration
+3. **Follow proper legal channels** for your concerns
+4. **Consider mediation or arbitration** for disputes
+
+**Professional Resources:**
+• **Law Society**: Find qualified legal professionals
+• **Citizens Advice**: Free legal guidance
+• **Legal Aid**: Support for those who qualify
+• **Ombudsman Services**: For specific sectors
+
+**Remember**: The legal system works best when all parties act honestly and in good faith. There are ethical solutions to most legal problems.
+
+${this.legalPrompts.DISCLAIMER}`;
+  }
+
+  /**
+   * Enhance responses for complex legal areas
+   */
+  enhanceComplexLegalResponse(originalContent) {
+    return `⚠️ **COMPLEX LEGAL AREA NOTICE** ⚠️
+
+The area of law you're asking about is particularly complex and requires specialist expertise.
+
+${originalContent}
+
+**STRONGLY RECOMMENDED - SEEK PROFESSIONAL ADVICE:**
+This area of law involves significant complexity that requires:
+• ✅ **Specialist legal knowledge** beyond general guidance
+• ✅ **Current case law understanding** specific to your situation
+• ✅ **Strategic legal planning** for optimal outcomes
+• ✅ **Professional representation** if court proceedings are involved
+
+**How to Find the Right Legal Help:**
+1. **Specialist Solicitors**: Use Law Society's "Find a Solicitor" tool
+2. **Legal Aid**: Check eligibility at gov.uk/legal-aid
+3. **Pro Bono Services**: Free legal help for qualifying cases
+4. **University Law Clinics**: Student-supervised free advice
+5. **Specialist Charities**: Many have legal advice services
+
+**Important Timing**: Some legal matters have strict time limits. Don't delay seeking professional advice.
+
+**Cost Considerations**: Many solicitors offer free initial consultations. Legal aid may be available for qualifying cases.
+
+${this.legalPrompts.DISCLAIMER}
+
+**This information cannot substitute for professional legal advice in complex matters.**`;
+  }
+
+  /**
+   * Get safeguards summary based on message flags
+   */
+  getSafeguardsSummary(messageFlags) {
+    const activeSafeguards = [];
+
+    if (messageFlags.emergency) {
+      activeSafeguards.push('Emergency resources provided');
+    }
+    if (messageFlags.harmful) {
+      activeSafeguards.push('Ethical guidance enforced');
+    }
+    if (messageFlags.requiresDisclaimer) {
+      activeSafeguards.push('Legal disclaimer added');
+    }
+    if (messageFlags.complexArea) {
+      activeSafeguards.push('Complex area warning issued');
+    }
+    if (messageFlags.requiresProfessional) {
+      activeSafeguards.push('Professional consultation recommended');
+    }
+
+    return activeSafeguards.length > 0 ? activeSafeguards : ['Standard legal information safeguards'];
+  }
+
+  /**
+   * Enhanced risk assessment considering message context
+   */
+  assessResponseRisk(content, messageFlags = {}) {
     const highRiskTerms = ['definitely', 'certainly', 'you should', 'you must', 'guaranteed'];
     const mediumRiskTerms = ['probably', 'likely', 'consider', 'might'];
 
     const lowerContent = content.toLowerCase();
 
+    // Automatically high risk for emergency or harmful content flags
+    if (messageFlags.emergency || messageFlags.harmful) {
+      return 'HIGH';
+    }
+
+    // High risk for complex legal areas without proper disclaimers
+    if (messageFlags.complexArea && !content.includes('professional advice')) {
+      return 'HIGH';
+    }
+
+    // Check for directive language
     if (highRiskTerms.some(term => lowerContent.includes(term))) {
       return 'HIGH';
     } else if (mediumRiskTerms.some(term => lowerContent.includes(term))) {
@@ -650,17 +885,42 @@ Tell me more about your specific situation so I can provide relevant information
    */
   async testConnection() {
     try {
-      const response = await this.client.get('/api/tags', { timeout: 5000 });
+      const models = await this.ollamaClient.list();
       return {
         connected: true,
-        models: response.data.models || [],
-        version: response.data.version || 'unknown'
+        models: models.models || [],
+        version: 'unknown'
       };
     } catch (error) {
       return {
         connected: false,
         error: error.message
       };
+    }
+  }
+
+  /**
+   * Pull/download a model
+   */
+  async pullModel(modelName = null) {
+    try {
+      const model = modelName || this.model;
+      await this.ollamaClient.pull({ model });
+      return { success: true, model };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Show model information
+   */
+  async showModel(modelName = null) {
+    try {
+      const model = modelName || this.model;
+      return await this.ollamaClient.show({ name: model });
+    } catch (error) {
+      return null;
     }
   }
 

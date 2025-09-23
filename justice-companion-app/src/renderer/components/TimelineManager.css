@@ -116,7 +116,7 @@
   border-radius: var(--radius-md);
   font-size: var(--text-base);
   font-family: var(--font-sans);
-  background: white;
+  background: rgba(30, 41, 59, 0.5);
   transition: all var(--transition-fast);
 }
 
@@ -271,7 +271,7 @@
   top: 0.5rem;
   width: 3rem;
   height: 3rem;
-  background: white;
+  background: rgba(30, 41, 59, 0.5);
   border: 3px solid var(--border-medium);
   border-radius: 50%;
   display: flex;
