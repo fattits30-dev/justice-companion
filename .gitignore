@@ -51,3 +51,6 @@ OllamaSetup.exe
 *.exe
 *.msi
 *.dmg
+# Model binaries and extracted GPU runtimes
+amd-ollama-extracted/
+*.gguf
